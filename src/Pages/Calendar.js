@@ -7,14 +7,16 @@ import koLocale from "@fullcalendar/core/locales/ko";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../Styles/Calendar.css"
-import { useAuth } from "../Common/Authstate";
-import TodoModal from "./components/TodoModal";
+import TodoAddModal from "./components/TodoAddModal";
 import AccountDropdown from "./components/AccountDropdown";
+import TodoDetailModal from "./components/TodoDetailModal";
 
 const Calendar =() => {
     // const { user, isUserClicked, setIsUserClicked, logout } = useAuth()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
+    const [isTodoAddModalOpen, setIsTodoAddModalOpen] = useState(false);
+    const [isTodoDetailModalOpen, setIsTodoDetailModalOpen] = useState(false);
+    const [selectedTodo, setSelectedTodo] = useState(null);
     const [events, setEvents] = useState([]);
     const token = localStorage.getItem("token");
 
@@ -36,7 +38,9 @@ const Calendar =() => {
                     const formattedEvents = result.data.map(todo => ({
                         id: todo.id,
                         title: todo.title,
-                        start: todo.deadline, // 마감 기한을 이벤트 시작 날짜로 설정
+                        start: todo.startDate,
+                        end: todo.deadline,
+                        allDay: true,
                         extendedProps: {
                             content: todo.content,
                             priority: todo.priority,
@@ -57,7 +61,19 @@ const Calendar =() => {
 
     const handleEventClick = (info) => {
         const event = info.event;
-        alert(`할 일: ${event.title}\n내용: ${event.extendedProps.content}\n 마감일: ${event.start.toISOString().split("T")[0]}\n 우선순위: ${event.extendedProps.priority}\n 상태: ${event.extendedProps.status}`);
+
+        setSelectedTodo({
+            title: event.title,
+            content: event.content,
+            startDate: event.start,
+            deadline: event.end,
+            priority: event.priority,
+            status: event.status,
+            createdDate: event.createdDate,
+            completedDate: event.completedDate
+        });
+
+        setIsTodoDetailModalOpen(true);
     };
 
 
@@ -98,19 +114,31 @@ const Calendar =() => {
                     </span>
                 </button>
                 {/* 할 일 추가 버튼 */}
-                <span class="material-symbols-outlined todoModal-button"
-                onClick={()=> setIsTodoModalOpen(true)}>
+                <span class="material-symbols-outlined todoAddModal-button"
+                onClick={()=> setIsTodoAddModalOpen(true)}>
                     add
                 </span>
 
-                <TodoModal isOpen={isTodoModalOpen} onClose={()=>{setIsTodoModalOpen(false)}}/>
-
-                <AccountDropdown
-                    // isUserClicked={isUserClicked} 
-                    // setIsUserClicked={setIsUserClicked} 
-                    // user={user} 
-                    // logout={logout} 
+                <TodoAddModal
+                    isOpen={isTodoAddModalOpen}
+                    onClose={()=>{setIsTodoAddModalOpen(false)}}
+                    onAddTodo={(newTodo) => setEvents([...events, {
+                        id: newTodo.id.toString(),
+                        title: newTodo.title,
+                        start: new Date(newTodo.startDate),
+                        end: new Date(newTodo.deadline),
+                        allDay: true,
+                        extendedProps: {
+                            content: newTodo.content,
+                            priority: newTodo.priority,
+                            status: "IN_PROGRESS",
+                            createdDate: newTodo.createdDate,
+                            completedDate: newTodo.completedDate
+                            // category: newTodo.category
+                        }
+                    }])}                   
                 />
+                <AccountDropdown/>
 
 
         
@@ -122,6 +150,7 @@ const Calendar =() => {
                     dayCellContent={(info) => info.date.getDate()} //날짜에 숫자만
                     editable={true} 
                     height="95vh"
+                    timeZone="local" //날짜 UTC변환 방지
                     titleFormat={{month:"long"}}
                     headerToolbar={{
                         left: "title today prev next",
@@ -130,7 +159,13 @@ const Calendar =() => {
                     }}
                     events={events}
                     eventClick={handleEventClick}
-                />                      
+                /> 
+
+                <TodoDetailModal
+                    isOpen={isTodoDetailModalOpen}
+                    onClose={()=>setIsTodoDetailModalOpen(false)}
+                    todo={selectedTodo}
+                />                     
             </div>
         </div> 
     );

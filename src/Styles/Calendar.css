@@ -105,7 +105,7 @@
 /* ---------계정 버튼 css------- */
 
 
-.todoModal-button{
+.todoAddModal-button{
   position: absolute;
   font-size: 18px;
   top:17px;
@@ -117,17 +117,17 @@
   z-index: 10;
   user-select: none;/* 텍스트 선택 방지 */
 }
-.todoModal-button:hover{
+.todoAddModal-button:hover{
   background-color: #2c3b5c
 }
-.todoModal {
+.todoAddModal {
   position:fixed;
   display: none;
   height: 100px;
   width: 100px;
   background-color: #2563eb;
 }
-.todoModal-opened {
+.todoAddModal-opened {
   display: block;
   height: 100px;
   width: 100px;
@@ -185,6 +185,10 @@
 /* ------캘린더 그리드 css------ */
 .fc-daygrid {
   margin-top: 50px;
+}
+.fc-daygrid-day-frame { 
+  /* event와 day-grid-number 겹치지 않도록 */
+  padding-top: 25px;
 }
 
 .fc-daygrid-day,
