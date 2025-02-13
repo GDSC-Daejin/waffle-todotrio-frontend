@@ -42,11 +42,9 @@ const Calendar =() => {
                         title: todo.title,
                         start: todo.startDate,
                         end: todo.deadline,
-                        allDay: true,
                         extendedProps: {
                             content: todo.content,
                             priority: todo.priority,
-                            status: todo.status,
                             createdDate: todo.createdDate,
                             completedDate: todo.completedDate
                         }
@@ -64,22 +62,22 @@ const Calendar =() => {
     // 할 일 선택 함수
     const handleEventClick = (info) => {
         const event = info.event;
-        console.log("이벤트 구조:",info.event);
 
         setSelectedTodo({
             id: event.id,
             title: event.title,
-            content: event.content,
             startDate: event.start,
             deadline: event.end,
             extendedProps: {
-                content: info.event._def.extendedProps?.content || "내용 없음",
-                priority: info.event._def.extendedProps?.priority || "우선순위 없음",
-                status: info.event._def.extendedProps?.status || "상태 없음",
-                createdDate: info.event._def.extendedProps?.createdDate || null,
-                completedDate: info.event._def.extendedProps?.completedDate || null
+                content: event._def.extendedProps?.content || "내용 없음",
+                priority: event._def.extendedProps?.priority || "우선순위 없음",
+                createdDate: event._def.extendedProps?.createdDate || null,
+                completedDate: event._def.extendedProps?.completedDate || null
             }
         });
+        console.log("이벤트 구조:",info.event);
+        console.log("이벤트 시작 시간:", event.start); // event.start
+        console.log("이벤트 종료 시간:", event.end);
 
         setIsTodoDetailModalOpen(true);
     };
@@ -161,20 +159,17 @@ const Calendar =() => {
                     isOpen={isTodoAddModalOpen}
                     onClose={()=>{setIsTodoAddModalOpen(false)}}
                     onAddTodo={(newTodo) => setEvents([...events, {
-                        id: newTodo.id.toString(),
+                        id: newTodo.id,
                         title: newTodo.title,
                         start: new Date(newTodo.startDate),
                         end: new Date(newTodo.deadline),
-                        allDay: true,
                         extendedProps: {
                             content: newTodo.content,
-                            priority: newTodo.priority,
-                            status: "IN_PROGRESS",
                             createdDate: newTodo.createdDate,
-                            completedDate: newTodo.completedDate
-                            // category: newTodo.category
+                            completedDate: newTodo.completedDate,
+                            priority: newTodo.priority,
                         }
-                    }])}                   
+                    }])}                
                 />
                 <AccountDropdown/>
 
@@ -188,7 +183,7 @@ const Calendar =() => {
                     dayCellContent={(info) => info.date.getDate()} //날짜에 숫자만
                     editable={true} 
                     height="95vh"
-                    timeZone="local" //날짜 UTC변환 방지
+                    timeZone="local"
                     titleFormat={{month:"long"}}
                     headerToolbar={{
                         left: "title today prev next",
@@ -197,6 +192,13 @@ const Calendar =() => {
                     }}
                     events={events}
                     eventClick={handleEventClick}
+                    eventContent={(eventInfo) => {
+                        return (
+                            <div className="event-title">
+                                {eventInfo.event.title}
+                            </div>
+                        );
+                    }}
                 /> 
 
                 <TodoDetailModal

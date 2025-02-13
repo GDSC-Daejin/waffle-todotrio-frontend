@@ -55,8 +55,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                 <p>내용: {todo.extendedProps?.content||"내용 없음"}</p>
                 <p>시작일: {todo.startDate.toLocaleDateString()}</p>
                 <p>마감일: {todo.deadline.toLocaleDateString()}</p>
-                <p>우선순위: {todo.extendedProps?.priority||"내용 없음"}</p>
-                <p>상태: {todo.extendedProps?.status||"내용 없음"}</p>
+                <p>중요도: {todo.extendedProps.priority}</p>
                 <DeleteButton onClick={() => onDelete(todo.id)}>삭제</DeleteButton>
             </TodoContent>
         </Wrapper>
