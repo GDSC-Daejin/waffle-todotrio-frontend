@@ -4,7 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import koLocale from "@fullcalendar/core/locales/ko";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../Styles/Calendar.css"
 import TodoAddModal from "./components/TodoAddModal";
@@ -20,6 +20,8 @@ const Calendar =() => {
     const [events, setEvents] = useState([]);
     const token = localStorage.getItem("token");
 
+
+    // 할 일 데이터 불러오기
     useEffect(() => {
         const fetchTodos = async () => {
             try {
@@ -59,21 +61,57 @@ const Calendar =() => {
         fetchTodos();
     }, []);
 
+    // 할 일 선택 함수
     const handleEventClick = (info) => {
         const event = info.event;
+        console.log("이벤트 구조:",info.event);
 
         setSelectedTodo({
+            id: event.id,
             title: event.title,
             content: event.content,
             startDate: event.start,
             deadline: event.end,
-            priority: event.priority,
-            status: event.status,
-            createdDate: event.createdDate,
-            completedDate: event.completedDate
+            extendedProps: {
+                content: info.event._def.extendedProps?.content || "내용 없음",
+                priority: info.event._def.extendedProps?.priority || "우선순위 없음",
+                status: info.event._def.extendedProps?.status || "상태 없음",
+                createdDate: info.event._def.extendedProps?.createdDate || null,
+                completedDate: info.event._def.extendedProps?.completedDate || null
+            }
         });
 
         setIsTodoDetailModalOpen(true);
+    };
+
+    // 선택된 할 일 삭제 함수
+    const handleDeleteTodo = async (todoId) => {
+        if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todoId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            if (response.ok) {
+                alert("할 일이 삭제되었습니다.");
+                setEvents((prevEvents) => prevEvents.filter(event => event.id !== todoId));
+                setIsTodoDetailModalOpen(false);
+
+            } else {
+                console.error("삭제 실패:", await response.json());
+                alert("삭제에 실패했습니다.");
+            }
+            
+        } catch (error) {
+            console.error("삭제 요청 중 오류 발생:", error);
+            alert("오류가 발생했습니다.");
+        }
+
     };
 
 
@@ -165,6 +203,7 @@ const Calendar =() => {
                     isOpen={isTodoDetailModalOpen}
                     onClose={()=>setIsTodoDetailModalOpen(false)}
                     todo={selectedTodo}
+                    onDelete={handleDeleteTodo}
                 />                     
             </div>
         </div> 

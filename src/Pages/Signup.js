@@ -2,6 +2,33 @@
 import React, { useState } from "react";
 import { Authstate } from "../Common/Authstate";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+const SignupForm = styled.form`
+  height:300px;
+  width:300px;
+  background-color: pink;
+  left:50%;
+  top:300px;
+  transform: translate(-50%, 0);
+  position: absolute;
+  padding:20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  input{
+    display: block;
+    margin:10px;
+    padding: 10px;
+  }
+  
+  button {
+    padding: 10px;
+  }
+`;
 
 const Signup = () => {
   // console.log(process.env.REACT_APP_API_BASE_URL);
@@ -46,7 +73,7 @@ const Signup = () => {
     <div>
       <h2>회원가입</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSignup}>
+      <SignupForm onSubmit={handleSignup}>
         <input
           type="text"
           placeholder="아이디"
@@ -66,7 +93,7 @@ const Signup = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
         <button type="submit">회원가입</button>
-      </form>
+      </SignupForm>
       <Link to="/" style={{color:"white", textDecoration:"none"}}>이미 계정이 있나요?</Link>
     </div>
   );

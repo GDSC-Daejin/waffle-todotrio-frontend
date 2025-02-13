@@ -2,6 +2,40 @@
 import React, { useContext, useState } from "react";
 import { Authstate } from "../Common/Authstate";
 import { Link, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+  position:relative;
+  height:100%;
+  width:100%;
+`;
+
+const LoginForm = styled.form`
+  height:200px;
+  width:300px;
+  background-color: pink;
+  left:50%;
+  top:300px;
+  transform: translate(-50%, 0);
+  position: absolute;
+  padding:20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  input{
+    display: block;
+    margin:10px;
+    padding: 10px;
+  }
+  
+  button {
+    padding: 10px;
+  }
+`;
+
 
 const Login = () => {
   const {login} = useContext(Authstate);
@@ -49,26 +83,29 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <>
       <h2>로그인</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="아이디"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">로그인</button>
-      </form>
+      <Wrapper>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <LoginForm onSubmit={handleLogin}>
+          <input
+            type="text"
+            placeholder="아이디"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit">로그인</button>
+        </LoginForm>
+        
+      </Wrapper>
       <Link to="/Signup" style={{color:"white", textDecoration:"none"}}>회원가입</Link>
-    </div>
+    </>
   );
 };
 
