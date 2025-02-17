@@ -43,7 +43,7 @@ const CloseButton = styled.span`
     z-index: 40
 `;
 const SaveButton = styled.button`
-    background-color: #4CAF50;
+    background-color: pink;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -52,7 +52,7 @@ const SaveButton = styled.button`
     border-radius: 5px;
 
     &:hover {
-        background-color: #45a049;
+        background-color: pink;
     }
 `;
 const DeleteButton = styled.button`

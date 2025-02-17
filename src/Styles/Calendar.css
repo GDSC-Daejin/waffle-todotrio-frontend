@@ -244,9 +244,30 @@
   transform: translate(-50%, -50%);
   z-index: -10;
 }
+
 /* ------일정 css------ */
-.fc-event {
-  background-color: #3498db !important; 
+.fc-event,
+.fc-event-main {
+  display: flex;
+  align-items: center;
+  width: 100%;
   overflow: hidden;
-  padding-left: 5px;
+  background-color: transparent !important;
+  border: none;
+  margin-right: 5px;
 }
+.event-item {
+  width: 100%;
+  display: flex;
+}
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+}
+.event-title {
+  background-color: #3498db !important;
+  padding: 3px 8px; 
+  border-radius: 3px !important;
+  width: 100%;
+}
+

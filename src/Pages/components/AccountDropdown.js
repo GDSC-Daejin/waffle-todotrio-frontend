@@ -1,10 +1,24 @@
 // AccountDropdown.js
 
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../Common/Authstate";
 
+const CalendarLink = styled(Link)`
+    color: white;
+    text-decoration: none;
+    position: absolute;
 
+    &:active,
+    &:focus {
+        color: white;
+        text-decoration: none;
+    }
+    span{
+        font-size:40px;
+        margin:10px;
+    }
+`;
 const Backdrop = styled.div`
     display: ${({ isUserClicked }) => (isUserClicked ? "block" : "none")};
     position: fixed;
@@ -75,14 +89,23 @@ const MenuItem = styled(Link)`
 `;
 
 const AccountDropdown = () => {
-    const { user, isUserClicked, setIsUserClicked, logout } = useAuth()
-
+    const { user, isUserClicked, setIsUserClicked, logout } = useAuth();
+    const location = useLocation();
+    const hideLink = location.pathname === "/Main";
 
     return(
+        <>
+            {!hideLink && 
+            <CalendarLink to="/Main" className="calendarLink">
+                <span class="material-symbols-outlined icon-calendar">
+                    calendar_month
+                </span>
+            </CalendarLink>
+            }
+
             <Wrapper>
-                
                 {/* user 테스트용 */}
-                <span style={{position:"absolute", right:"120px", top:"12px", whiteSpace: "nowrap"}}>{user ? `${user.username}님` : ""}</span>
+                <span style={{position:"absolute", right:"120px", top:"12px", whiteSpace: "nowrap", color:'white'}}>{user ? `${user.username}님` : ""}</span>
 
                 <UserButton>
                     <span class="material-symbols-outlined" style={{fontSize:"40px"}}
@@ -97,12 +120,7 @@ const AccountDropdown = () => {
                             <span class="material-symbols-outlined">close</span>
                         </CloseButton>
 
-                        {user == null ? (
-                            <>
-                                {/* <MenuItem to="/Login">로그인</MenuItem>
-                                <MenuItem to="/Signup">회원가입</MenuItem> */}
-                            </>
-                        ) : (
+                        {user == null ? (<></>) : (
                             <>
                                 <MenuItem to="/User">계정 관리</MenuItem>
                                 <MenuItem as="a" onClick={logout}>
@@ -110,10 +128,20 @@ const AccountDropdown = () => {
                                 </MenuItem>                    
                             </>
                         )}
+
+                        {/* 임시 내비게이션 바 */}
+                        <div style={{}}>
+                            <Link to="/Signup" style={{color:"white",display:'block'}}>회원가입</Link>
+                            <Link to="/Dashboard" style={{color:"white",display:'block'}}>대쉬보드</Link>
+                            <Link to="/Teams" style={{color:"white",display:'block'}}>팀 정보</Link>
+                            <Link to="/User" style={{color:"white",display:'block'}}>회원정보</Link>
+                        </div>
+
                     </Dropdown>                    
                 </Backdrop>
+            </Wrapper>        
+        </>
 
-            </Wrapper>
     );
 }
 

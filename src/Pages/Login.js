@@ -39,7 +39,7 @@ const LoginForm = styled.form`
 
 
 const Login = () => {
-  const {login} = useContext(Authstate);
+  const { login } = useContext(Authstate);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -68,6 +68,7 @@ const Login = () => {
       // 토큰 저장 (백엔드에서 토큰을 제공할 경우)
       if (data.data) {
         localStorage.setItem("token", data.data);
+        console.log("토큰:",data.data);
       }
 
       if(data.success){
@@ -105,7 +106,15 @@ const Login = () => {
         </LoginForm>
         
       </Wrapper>
-      <Link to="/Signup" style={{color:"white", textDecoration:"none"}}>회원가입</Link>
+
+      {/* 임시 내비게이션 바 */}
+      <div style={{position:'absolute', bottom:'10px'}}>
+        <Link to="/Signup" style={{color:"white",display:'block'}}>회원가입</Link>
+        <Link to="/Dashboard" style={{color:"white",display:'block'}}>대쉬보드</Link>
+        <Link to="/Teams" style={{color:"white",display:'block'}}>팀 정보</Link>
+        <Link to="/User" style={{color:"white",display:'block'}}>회원정보</Link>
+      </div>
+
     </>
   );
 };

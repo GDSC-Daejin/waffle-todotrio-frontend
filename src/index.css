@@ -11,6 +11,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #2D2F3C;
 }
+input, textarea {
+  font-family: "Noto Sans KR", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-weight: bold;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

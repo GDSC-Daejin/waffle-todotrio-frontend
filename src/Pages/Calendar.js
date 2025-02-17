@@ -191,11 +191,12 @@ const Calendar =() => {
                         right: ""
                     }}
                     events={events}
-                    eventClick={handleEventClick}
+                    // eventClick={handleEventClick}
                     eventContent={(eventInfo) => {
                         return (
-                            <div className="event-title">
-                                {eventInfo.event.title}
+                            <div className="event-item">
+                                <input type="checkbox" className="todo-checkbox"/>
+                                <span className="event-title" onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}</span>
                             </div>
                         );
                     }}

@@ -89,7 +89,7 @@ const Signup = () => {
         <input
           type="text"
           placeholder="이메일"
-          value={username}
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <button type="submit">회원가입</button>
