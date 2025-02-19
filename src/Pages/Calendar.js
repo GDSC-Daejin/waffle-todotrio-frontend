@@ -10,9 +10,9 @@ import "../Styles/Calendar.css"
 import TodoAddModal from "./components/TodoAddModal";
 import AccountDropdown from "./components/AccountDropdown";
 import TodoDetailModal from "./components/TodoDetailModal";
+import MiniCalendar from "./components/MiniCalendar";
 
 const Calendar =() => {
-    // const { user, isUserClicked, setIsUserClicked, logout } = useAuth()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTodoAddModalOpen, setIsTodoAddModalOpen] = useState(false);
     const [isTodoDetailModalOpen, setIsTodoDetailModalOpen] = useState(false);
@@ -43,6 +43,8 @@ const Calendar =() => {
                         start: todo.startDate,
                         end: todo.deadline,
                         extendedProps: {
+                            category: todo.category,
+                            status: todo.status,
                             content: todo.content,
                             priority: todo.priority,
                             createdDate: todo.createdDate,
@@ -69,10 +71,12 @@ const Calendar =() => {
             startDate: event.start,
             deadline: event.end,
             extendedProps: {
-                content: event._def.extendedProps?.content || "내용 없음",
-                priority: event._def.extendedProps?.priority || "우선순위 없음",
-                createdDate: event._def.extendedProps?.createdDate || null,
-                completedDate: event._def.extendedProps?.completedDate || null
+                category: event.extendedProps?.category || "",
+                status: event.extendedProps?.status || "상태 없음",
+                content: event.extendedProps?.content || "내용 없음",
+                priority: event.extendedProps?.priority || "우선순위 없음",
+                createdDate: event.extendedProps?.createdDate || null,
+                completedDate: event.extendedProps?.completedDate || null
             }
         });
         console.log("이벤트 구조:",info.event);
@@ -112,15 +116,12 @@ const Calendar =() => {
 
     };
 
-
     return(
         <div className="calendar-tab-flexbox">
             {/* 왼쪽 사이드바 */}
             <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
                 <div className="sidebar-grid">
-                    <div>
-                        Mini Calendar
-                    </div>
+                    <MiniCalendar/>
                     <div>todolist</div>
                     <div className="side-navs">
                         <Link to="/Dashboard">
@@ -164,6 +165,7 @@ const Calendar =() => {
                         start: new Date(newTodo.startDate),
                         end: new Date(newTodo.deadline),
                         extendedProps: {
+                            status: newTodo.status,
                             content: newTodo.content,
                             createdDate: newTodo.createdDate,
                             completedDate: newTodo.completedDate,

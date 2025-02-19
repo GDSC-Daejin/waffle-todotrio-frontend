@@ -72,7 +72,7 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
         e.preventDefault();
 
         // 필수항목 미입력 시
-        if(!title||!startDate||!deadline){
+        if(!title||!content||!startDate||!deadline){
             alert("모든 필드를 입력해주세요")
             return;
         }
@@ -131,15 +131,15 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
                 <h2>할 일 추가</h2>
                 <Form onSubmit={handleSubmit}>
                     <label>
-                        제목:
+                        제목
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
                     </label>
                     <label>
-                        내용:
-                        <textarea value={content} onChange={(e) => setContent(e.target.value)}/>
+                        내용
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} required/>
                     </label>
                     <label>
-                        중요도:
+                        중요도
                         <select value={priority} onChange={(e) => setPriority(e.target.value)}>
                             <option value="HIGH">높음</option>
                             <option value="MEDIUM">중간</option>
@@ -147,11 +147,11 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
                         </select>
                     </label>
                     <label>
-                        시작일:
+                        시작일
                         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
                     </label>
                     <label>
-                        마감일:
+                        마감일
                         <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} required />
                     </label>                    
                     <button type="submit">추가</button>

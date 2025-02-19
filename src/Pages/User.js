@@ -29,7 +29,7 @@ const Form = styled.form`
 `;
 const Button = styled.button`
     background-color: pink;
-    width:50px;
+    width:80px;
     color: white;
     border: none;
     padding: 8px 12px;

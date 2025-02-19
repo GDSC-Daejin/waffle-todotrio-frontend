@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
     height: auto;
-    width: 250px;
+    width: 300px;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -17,20 +17,19 @@ const Wrapper = styled.div`
     padding-top:60px;
 `;
 
-const TodoContent = styled.div`
-
-`;
 const Form = styled.form`
     display:block;
-
     label {
         display: block;
         margin-bottom:20px;
     }
-    
     input, select, textarea {
-        position: absolute;
-        left:100px;
+        // position: absolute;
+        left:150px;
+        
+    }
+    select {
+        transform: translate(0,5px);
     }
 `;
 const CloseButton = styled.span`
@@ -68,16 +67,35 @@ const DeleteButton = styled.button`
         background-color: darkred;
     }
 `;
+const CompleteButton = styled.button`
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+        background-color: darkgreen;
+    }
+
+    &:disabled {
+        background-color: gray;
+        cursor: not-allowed;
+    }
+`;
 
 const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
-    
     const [editedTodo, setEditedTodo] = useState({
         title: "",
         content: "",
         priority: "",
+        status: "",
         startDate: "",
         deadline: "",
     });
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
 
@@ -93,9 +111,11 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                 title: todo.title,
                 content: todo.extendedProps?.content || "",
                 priority: todo.extendedProps.priority,
+                status: todo.extendedProps.status,
                 startDate: addNineHours(todo.startDate),
                 deadline: addNineHours(todo.deadline),
             });
+
         }
     }, [todo]);
 
@@ -109,6 +129,59 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
             [name]: value
         });
     };
+
+    // 할 일 완료 처리
+    const handleComplete = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            const result = await response.json();
+            console.log("서버 응답:", result);
+    
+            if (result.success) {
+                alert("할 일이 완료되었습니다!");
+            } else {
+                alert("완료 처리에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("완료 처리 오류:", error);
+            alert("네트워크 오류가 발생했습니다.");
+        }
+    };
+
+    // 할 일 완료 취소 처리
+    const handleProgress = async () => {
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            const result = await response.json();
+            console.log("서버 응답:", result);
+    
+            if (result.success) {
+                alert("할 일이 완료되었습니다!");
+            } else {
+                alert("완료 처리에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("완료 처리 오류:", error);
+            alert("네트워크 오류가 발생했습니다.");
+        }
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -131,6 +204,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     title: editedTodo.title,
                     content: editedTodo.content,
                     priority: editedTodo.priority,
+                    status: editedTodo.status,
                     startDate: addNineHours(editedTodo.startDate),
                     deadline: addNineHours(editedTodo.deadline)
                 })
@@ -151,28 +225,32 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
 
     return(
         <Wrapper>
-            <TodoContent>
+            <div>
                 <CloseButton onClick={onClose}>
                     <span class="material-symbols-outlined">close</span>
                 </CloseButton>
                 <Form onSubmit={handleSubmit}>
                     <label>
-                        제목:
-                        <input type="text" name="title"
-                            value={editedTodo.title}
-                            onChange={handleChange}
-                            required
-                        />
+                        <h2>
+                            {todo.extendedProps?.category ? `[${todo.extendedProps.category}]`: ""}
+                            <input type="text" name="title"
+                                value={editedTodo.title}
+                                onChange={handleChange}
+                                required
+
+                            />                            
+                        </h2>
+
                     </label>
                     <label>
-                        내용:
+                        <span class="material-symbols-outlined">notes</span>
                         <textarea name="content"
                             value={editedTodo.content}
                             onChange={handleChange}
                         />
                     </label>
                     <label>
-                        중요도:
+                        <span class="material-symbols-outlined">star</span>
                         <select name="priority"
                             value={editedTodo.priority}
                             onChange={handleChange}
@@ -183,25 +261,41 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                         </select>
                     </label>
                     <label>
-                        시작일:
                         <input type="date" name="startDate"
                             value={editedTodo.startDate}
                             onChange={handleChange}
                             required
                         />
-                    </label>
-                    <label>
-                        마감일:
+                        <span class="material-symbols-outlined">minimize</span>
                         <input type="date" name="deadline"
                             value={editedTodo.deadline}
                             onChange={handleChange}
                             required
                         />
                     </label>
+                    <label>
+                        <span class="material-symbols-outlined">progress_activity</span>
+                        <select name="status"
+                            value={editedTodo.status}
+                            onChange={handleChange}
+                        >
+                            <option value="DELAYED">지연</option>
+                            <option value="IN_PROGRESS">진행중</option>
+                            <option value="COMPLETED">완료</option>
+                        </select>
+                    </label>
+                    <label>
+                        <CompleteButton onClick={handleComplete}>
+                            완료 버튼
+                        </CompleteButton>
+                        <CompleteButton onClick={handleProgress}>
+                            완료 취소 버튼
+                        </CompleteButton>
+                    </label>
                     <SaveButton type="submit">저장</SaveButton>
                 </Form>
                 <DeleteButton onClick={() => onDelete(todo.id)}>삭제</DeleteButton>
-            </TodoContent>
+            </div>
         </Wrapper>
     );
 };

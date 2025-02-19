@@ -1,7 +1,5 @@
 /* Calendar.css */
 
-
-
 .calendar-tab-flexbox{
   display: flex;
   position: relative;
@@ -16,7 +14,6 @@
   left:0;
   width: 0px;
   overflow: hidden;
-  transition: width 0.3s ease;
   height: 100vh;
   box-sizing: border-box;
   background-color: #323650;
@@ -76,7 +73,7 @@
 
 .sidebar-button {
   position: absolute;
-  top: 8px;
+  top: 20px;
   left: 8px;
   background-color: transparent;
   color: white;
@@ -91,7 +88,7 @@
 }
 
 .sidebar-button.rotated {
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateY(5px);
 }
 
 
@@ -154,11 +151,14 @@
   text-align: right;
 }
 .fc-prev-button,
+.fc-next-button{
+  background-color: transparent !important;
+}
+.fc-prev-button,
 .fc-next-button,
 .fc-today-button {
   display: block !important;
   text-align: center; 
-  background-color: #3a4f76 !important;
   border-radius: 8px !important;
   font-size: 12px !important;
   border: none !important;
@@ -251,10 +251,8 @@
   display: flex;
   align-items: center;
   width: 100%;
-  overflow: hidden;
   background-color: transparent !important;
   border: none;
-  margin-right: 5px;
 }
 .event-item {
   width: 100%;
@@ -269,5 +267,7 @@
   padding: 3px 8px; 
   border-radius: 3px !important;
   width: 100%;
+  overflow: hidden;
+  margin: 0 5px 0 0;
 }
 
