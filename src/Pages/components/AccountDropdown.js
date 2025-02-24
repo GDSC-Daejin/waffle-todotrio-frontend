@@ -1,4 +1,5 @@
 // AccountDropdown.js
+// 계정관리 및 로그아웃 드롭다운
 
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
@@ -15,8 +16,8 @@ const CalendarLink = styled(Link)`
         text-decoration: none;
     }
     span{
-        font-size:40px;
-        margin:10px;
+        font-size:45px;
+        transform: translate(0, 4px);
     }
 `;
 const Backdrop = styled.div`
@@ -96,12 +97,14 @@ const AccountDropdown = () => {
     return(
         <>
             {!hideLink && 
-            <CalendarLink to="/Main" className="calendarLink">
-                <span class="material-symbols-outlined icon-calendar">
-                    calendar_month
-                </span>
-            </CalendarLink>
-            }
+            <div style={{margin:'15px'}}>
+                <img src="/logo.png" alt="Todotrio Logo" style={{width:'80px', height:'auto', marginRight:'20px'}}/>
+                <CalendarLink to="/Main" className="calendarLink">
+                    <span class="material-symbols-outlined icon-calendar">
+                        calendar_month
+                    </span>
+                </CalendarLink>
+            </div>}
 
             <Wrapper>
                 {/* user 테스트용 */}

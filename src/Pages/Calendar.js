@@ -1,4 +1,5 @@
-//Calendar.js
+// Calendar.js
+// 캘린더 페이지
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -17,14 +18,16 @@ const Calendar =() => {
     const [isTodoAddModalOpen, setIsTodoAddModalOpen] = useState(false);
     const [isTodoDetailModalOpen, setIsTodoDetailModalOpen] = useState(false);
     const [selectedTodo, setSelectedTodo] = useState(null);
+
+
     const [events, setEvents] = useState([]);
     const token = localStorage.getItem("token");
-
 
     // 할 일 데이터 불러오기
     useEffect(() => {
         const fetchTodos = async () => {
             try {
+                // 개인 Todo 가져오기
                 const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos`, {
                     method: "GET",
                     headers: {
@@ -36,8 +39,24 @@ const Calendar =() => {
 
                 console.log ("서버 응답 데이터", result);
 
-                if (result.success) {
-                    const formattedEvents = result.data.map(todo => ({
+                // 공유받은 Todo 가져오기
+                const sharedResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/shared`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+                const sharedResult = await sharedResponse.json();
+
+                console.log ("공유todo 서버 응답 데이터", sharedResult);
+
+                if (result.success && sharedResult.success) {
+                    const allTodos = [...result.data, ...sharedResult.data];
+
+                    console.log ("모든 투두", allTodos);
+
+                    const formattedEvents = allTodos.map(todo => ({
                         id: todo.id,
                         title: todo.title,
                         start: todo.startDate,
@@ -51,6 +70,7 @@ const Calendar =() => {
                             completedDate: todo.completedDate
                         }
                     }));
+
                     console.log("캘린더에 등록될 이벤트:", formattedEvents);
                     setEvents(formattedEvents);
                 }
@@ -198,7 +218,8 @@ const Calendar =() => {
                         return (
                             <div className="event-item">
                                 <input type="checkbox" className="todo-checkbox"/>
-                                <span className="event-title" onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}</span>
+                                <span className="event-title" onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}
+                                </span>
                             </div>
                         );
                     }}

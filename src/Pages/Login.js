@@ -1,8 +1,11 @@
 // Login.js
+// 로그인 페이지
+
 import React, { useContext, useState } from "react";
 import { Authstate } from "../Common/Authstate";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+// import logo from "../../Styles/logo.png";
 
 const Wrapper = styled.div`
   position:relative;
@@ -13,7 +16,7 @@ const Wrapper = styled.div`
 const LoginForm = styled.form`
   height:200px;
   width:300px;
-  background-color: pink;
+  border:1px solid gray;
   left:50%;
   top:300px;
   transform: translate(-50%, 0);
@@ -86,7 +89,7 @@ const Login = () => {
 
   return (
     <>
-      <h2>로그인</h2>
+      <img src="/logo.png" alt="Todotrio Logo" style={{position:'absolute',width:'200px', height:'auto', top:'10%', left:'50%'}}/>
       <Wrapper>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <LoginForm onSubmit={handleLogin}>

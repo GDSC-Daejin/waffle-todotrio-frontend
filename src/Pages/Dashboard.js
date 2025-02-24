@@ -1,5 +1,5 @@
-//Dashboard.js
-import { Authstate } from "../Common/Authstate";
+// Dashboard.js
+// 대쉬보드 페이지
 
 const Dashboard = () => {
     return(

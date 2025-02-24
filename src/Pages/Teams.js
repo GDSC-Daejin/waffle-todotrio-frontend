@@ -1,4 +1,6 @@
-//Teams.js
+// Teams.js
+// 그룹 페이지
+
 import { useState } from "react";
 import styled from "styled-components";
 

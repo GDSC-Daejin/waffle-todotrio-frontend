@@ -1,4 +1,6 @@
 // Signup.js
+// 회원가입 페이지
+
 import React, { useState } from "react";
 import { Authstate } from "../Common/Authstate";
 import { Link } from "react-router-dom";
@@ -7,7 +9,7 @@ import styled from "styled-components";
 const SignupForm = styled.form`
   height:300px;
   width:300px;
-  background-color: pink;
+  border:1px solid gray;
   left:50%;
   top:300px;
   transform: translate(-50%, 0);

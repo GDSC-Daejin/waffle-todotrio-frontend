@@ -1,4 +1,6 @@
-//User.js
+// User.js
+// 회원정보수정 페이지
+
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../Common/Authstate";

@@ -1,92 +1,18 @@
-//TodoDetailModal.js
+// TodoDetailModal.js
+// 할 일 상세정보 모달창
 
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { Wrapper, Form, CloseButton, EditButton, SaveButton, ShareButton, DeleteButton, CompleteButton, Sharer } from "../../Styles/TodoDetailModalStyle";
+import TextareaAutosize from 'react-textarea-autosize';
+import ShareTodoModal from "./ShareTodoModal";
 
-const Wrapper = styled.div`
-    height: auto;
-    width: 300px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index:50;
-    background-color: #3a4f76;
-    border-radius: 8px;
-    padding: 20px;
-    padding-top:60px;
-`;
 
-const Form = styled.form`
-    display:block;
-    label {
-        display: block;
-        margin-bottom:20px;
-    }
-    input, select, textarea {
-        // position: absolute;
-        left:150px;
-        
-    }
-    select {
-        transform: translate(0,5px);
-    }
-`;
-const CloseButton = styled.span`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 40
-`;
-const SaveButton = styled.button`
-    background-color: pink;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius: 5px;
-
-    &:hover {
-        background-color: pink;
-    }
-`;
-const DeleteButton = styled.button`
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius: 5px;
-
-    &:hover {
-        background-color: darkred;
-    }
-`;
-const CompleteButton = styled.button`
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius: 5px;
-
-    &:hover {
-        background-color: darkgreen;
-    }
-
-    &:disabled {
-        background-color: gray;
-        cursor: not-allowed;
-    }
-`;
 
 const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [successRate, setSuccessRate] = useState(null);
+    const [sharedUser, setSharedUser] = useState([]);
     const [editedTodo, setEditedTodo] = useState({
         title: "",
         content: "",
@@ -97,8 +23,70 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     });
     const token = localStorage.getItem("token");
 
+    // 모달 열릴 때 편집모드 초기화
     useEffect(() => {
+        if (isOpen) {
+            setIsEditing(false);
+            setIsSearching(false);
+        }
+    }, [isOpen]);
 
+    // 공유자 정보 가져오기
+    useEffect(() => {
+        const fetchSharedUser = async () => {
+            if (!todo) return;
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/${todo.id}/sharer`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    setSharedUser(responseData.data);
+                    console.error("공유자 데이터", responseData.data);
+                } else {
+                    console.error("공유자 목록 가져오기 실패:", response.status);
+                }
+            } catch (error) {
+                console.error("공유자 목록 요청 오류:", error);
+            }
+        };
+        fetchSharedUser();
+    }, [todo, token, setSharedUser]);
+
+    // 예상성공률 가져오기
+    useEffect(() => {
+        const fetchSuccessRate = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/success-probabillity`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    }
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    setSuccessRate(data.successRate); // 응답에서 성공률을 받아와서 상태로 저장
+                } else {
+                    console.error("성공률을 가져오기 실패");
+                }
+            } catch (error) {
+                console.error("성공률api 호출 오류:", error);
+            }
+        };
+    
+        if (todo) {
+            fetchSuccessRate();
+        }
+    }, [todo, token]);
+    
+
+    useEffect(() => {
         if (todo) {
             const addNineHours = (dateString) => {
                 if (!dateString) return null;
@@ -113,14 +101,14 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                 priority: todo.extendedProps.priority,
                 status: todo.extendedProps.status,
                 startDate: addNineHours(todo.startDate),
-                deadline: addNineHours(todo.deadline),
+                deadline: addNineHours(todo.deadline)
             });
 
         }
     }, [todo]);
 
-    if (!isOpen || !todo) return null;    
-
+    // 코드 삭제할지 검토
+    if (!isOpen || !todo) return null;   
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -133,6 +121,12 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     // 할 일 완료 처리
     const handleComplete = async () => {
         try {
+            // const endpoint = editedTodo.status === "COMPLETED" 
+            // ? `${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart` 
+            // : `${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`;
+            // console.log("엔드포인트:", endpoint);
+
+            // const response = await fetch(endpoint, {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`, {
                 method: "PUT",
                 headers: {
@@ -140,46 +134,50 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     "Content-Type": "application/json"
                 }
             });
-    
+            console.log("보내는데이터:",response);
+            console.log("보내는데이터 ok:",response.ok);
+            console.log("보내는데이터 status:",response.status);
             const result = await response.json();
             console.log("서버 응답:", result);
     
             if (result.success) {
-                alert("할 일이 완료되었습니다!");
+                alert("진행상황 수정 완료!");
             } else {
-                alert("완료 처리에 실패했습니다.");
+                alert("진행상황 수정 실패");
+                return;
             }
         } catch (error) {
-            console.error("완료 처리 오류:", error);
+            console.error("진행상황 수정 처리 오류:", error);
             alert("네트워크 오류가 발생했습니다.");
         }
     };
 
+    //버튼 1개로 취소까지 정상작동하는거 확인되고나면 handleProgress 삭제 
     // 할 일 완료 취소 처리
-    const handleProgress = async () => {
+    // const handleProgress = async () => {
     
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
+    //     try {
+    //         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart`, {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Authorization": `Bearer ${token}`,
+    //                 "Content-Type": "application/json"
+    //             }
+    //         });
     
-            const result = await response.json();
-            console.log("서버 응답:", result);
+    //         const result = await response.json();
+    //         console.log("서버 응답:", result);
     
-            if (result.success) {
-                alert("할 일이 완료되었습니다!");
-            } else {
-                alert("완료 처리에 실패했습니다.");
-            }
-        } catch (error) {
-            console.error("완료 처리 오류:", error);
-            alert("네트워크 오류가 발생했습니다.");
-        }
-    };
+    //         if (result.success) {
+    //             alert("할 일이 완료되었습니다!");
+    //         } else {
+    //             alert("완료 처리에 실패했습니다.");
+    //         }
+    //     } catch (error) {
+    //         console.error("완료 처리 오류:", error);
+    //         alert("네트워크 오류가 발생했습니다.");
+    //     }
+    // };
 
 
     const handleSubmit = async (e) => {
@@ -227,9 +225,25 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         <Wrapper>
             <div>
                 <CloseButton onClick={onClose}>
-                    <span class="material-symbols-outlined">close</span>
+                    <span class="material-symbols-outlined"
+                    style={{fontSize:'30px'}}>close</span>
                 </CloseButton>
+                {!isEditing &&
+                <EditButton onClick={()=>setIsEditing(true)}>
+                    <span class="material-symbols-outlined"
+                    style={{fontSize:'30px'}}>edit</span>
+                </EditButton>}
                 <Form onSubmit={handleSubmit}>
+                    <label style={{color:'#B266FF'}}>
+                        <span class="material-symbols-outlined"
+                        style={{fontSize:'25px', transform:'translate(0,5px)',marginRight:'7px'}}>orbit</span>
+                        <strong>할 일 예상 성공률 : {successRate ? `${successRate}` : "예측 불가"}</strong>
+                    </label>
+                    {sharedUser.length > 0 && (
+                        <label>
+                            <Sharer>{sharedUser}</Sharer>
+                        </label>
+                    )}
                     <label>
                         <h2>
                             {todo.extendedProps?.category ? `[${todo.extendedProps.category}]`: ""}
@@ -237,16 +251,32 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                                 value={editedTodo.title}
                                 onChange={handleChange}
                                 required
-
+                                className="input-todotitle"
+                                disabled={!isEditing}
                             />                            
                         </h2>
-
+                    </label>
+                    <label>
+                        <input type="date" name="startDate"
+                            value={editedTodo.startDate}
+                            onChange={handleChange}
+                            disabled={!isEditing}
+                            required
+                        />
+                        <span class="material-symbols-outlined">minimize</span>
+                        <input type="date" name="deadline"
+                            value={editedTodo.deadline}
+                            onChange={handleChange}
+                            disabled={!isEditing}
+                            required
+                        />
                     </label>
                     <label>
                         <span class="material-symbols-outlined">notes</span>
-                        <textarea name="content"
+                        <TextareaAutosize name="content"
                             value={editedTodo.content}
                             onChange={handleChange}
+                            disabled={!isEditing}
                         />
                     </label>
                     <label>
@@ -254,6 +284,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                         <select name="priority"
                             value={editedTodo.priority}
                             onChange={handleChange}
+                            disabled={!isEditing}
                         >
                             <option value="HIGH">높음</option>
                             <option value="MEDIUM">중간</option>
@@ -261,40 +292,39 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                         </select>
                     </label>
                     <label>
-                        <input type="date" name="startDate"
-                            value={editedTodo.startDate}
-                            onChange={handleChange}
-                            required
-                        />
-                        <span class="material-symbols-outlined">minimize</span>
-                        <input type="date" name="deadline"
-                            value={editedTodo.deadline}
-                            onChange={handleChange}
-                            required
-                        />
-                    </label>
-                    <label>
                         <span class="material-symbols-outlined">progress_activity</span>
                         <select name="status"
                             value={editedTodo.status}
                             onChange={handleChange}
+                            disabled={!isEditing}
                         >
                             <option value="DELAYED">지연</option>
                             <option value="IN_PROGRESS">진행중</option>
                             <option value="COMPLETED">완료</option>
                         </select>
                     </label>
-                    <label>
-                        <CompleteButton onClick={handleComplete}>
-                            완료 버튼
-                        </CompleteButton>
-                        <CompleteButton onClick={handleProgress}>
-                            완료 취소 버튼
-                        </CompleteButton>
-                    </label>
-                    <SaveButton type="submit">저장</SaveButton>
+                    {isEditing && <SaveButton type="submit">수정내용 저장</SaveButton>}
                 </Form>
-                <DeleteButton onClick={() => onDelete(todo.id)}>삭제</DeleteButton>
+                <CompleteButton onClick={handleComplete}>
+                    {editedTodo.status === "COMPLETED" ? "완료 취소 버튼" : "완료 버튼"}
+                </CompleteButton>
+                {/* <CompleteButton onClick={handleProgress}>
+                    완료 취소 버튼
+                </CompleteButton> */}
+                {!isEditing &&
+                    <ShareButton onClick={()=>setIsSearching(true)}>
+                        <span class="material-symbols-outlined"
+                        style={{fontSize:'40px'}}>
+                            ios_share
+                        </span>                        
+                    </ShareButton>
+                }
+                {isEditing && <DeleteButton onClick={() => onDelete(todo.id)}>할 일 삭제</DeleteButton>}
+                {isSearching &&
+                    <ShareTodoModal
+                        todo={todo}
+                        onClose={()=>setIsSearching(false)}
+                />}
             </div>
         </Wrapper>
     );
