@@ -1,3 +1,5 @@
+# waffle-todotrio-frontend
+투두삼총사 프론트엔드 코드
 
 # Project
 
@@ -71,4 +73,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
