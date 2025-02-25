@@ -33,20 +33,34 @@ export const Indicator = styled.div`
 `;
 
 export const TabWrapper = styled.div`
-    // background-color: pink;
-    margin: auto;
+    display: flex;
+
+    margin-left: auto;
+    margin-right:auto;
     margin-top: 50px;
     padding: 10px;
-    width: 900px;
-`;
+    width: 90vw;
 
+`;
+export const PieContainer = styled.div `
+    display:none;
+    @media (min-width: 1000px){
+        display: flex;
+        width: 30%; 
+        justify-content: center;
+        align-items: center;
+    }
+`;
 export const ProgressContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: min-content;
     gap: 10px;
     margin: auto;
-
+    width: 100%; 
+    @media (min-width: 1000px) {
+        width:70%;
+    }
 `;
 export const ProgressHeader = styled.div`
     padding: 20px;

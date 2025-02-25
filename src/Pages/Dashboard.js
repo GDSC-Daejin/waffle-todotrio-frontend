@@ -1,11 +1,9 @@
 // Dashboard.js
 // 대쉬보드 페이지
-
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import {TabBar, Tab, Indicator, TabWrapper, ProgressContainer, ProgressHeader, TodoItem, SharedTodoItem, Sharer} from "../Styles/DashboardStyle";
-
-
+import {TabBar, Tab, Indicator, TabWrapper, ProgressContainer, ProgressHeader, TodoItem, SharedTodoItem, Sharer, PieContainer} from "../Styles/DashboardStyle";
+import ProgressPie from "./components/ProgressPie";
 
 const Dashboard = () => {
     const location = useLocation();
@@ -22,6 +20,10 @@ const Dashboard = () => {
     const inProgressTodos = todos.filter(todo => todo.extendedProps.status === "IN_PROGRESS");
     const completedTodos = todos.filter(todo => todo.extendedProps.status === "COMPLETED");
     const delayedTodos = todos.filter(todo => todo.extendedProps.status === "DELAYED");
+    // 진행상황별 todo 갯수 세기 
+    const inProgressCount = inProgressTodos.length;
+    const completedCount = completedTodos.length;
+    const delayedCount = delayedTodos.length;
 
     // 공유받은 Todo 가져오기
     useEffect(() => {
@@ -98,6 +100,8 @@ const Dashboard = () => {
 
     return(
         <div style={{marginTop:'80px'}}>
+
+
             <TabBar>
                 <Tab
                     isActive={selectedTab === "progressTab"}
@@ -113,6 +117,13 @@ const Dashboard = () => {
             </TabBar>
             {selectedTab === "progressTab" && (
                 <TabWrapper>
+                    <PieContainer>
+                        <ProgressPie
+                            inProgressCount={inProgressCount}
+                            completedCount={completedCount}
+                            delayedCount={delayedCount}
+                        />                
+                    </PieContainer>                       
                     <ProgressContainer>
                         <ProgressHeader><div style={{backgroundColor:'#3B82F6'}}/>진행 중</ProgressHeader>
                         <ProgressHeader><div style={{backgroundColor:'#34C759'}}/>완료</ProgressHeader>
