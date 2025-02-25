@@ -126,6 +126,7 @@ export const CompleteButton = styled.button`
 `;
 export const Sharer = styled.span`
     background-color: #346A3E;
+    color: #CCFFCC;
     padding: 2px 5px;
     border-radius: 4px;
 `;

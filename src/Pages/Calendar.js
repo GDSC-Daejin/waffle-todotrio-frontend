@@ -5,7 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import koLocale from "@fullcalendar/core/locales/ko";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../Styles/Calendar.css"
 import TodoAddModal from "./components/TodoAddModal";
@@ -144,7 +144,10 @@ const Calendar =() => {
                     <MiniCalendar/>
                     <div>todolist</div>
                     <div className="side-navs">
-                        <Link to="/Dashboard">
+                        <Link 
+                            to="/Dashboard"
+                            state={{ todos: events }}
+                        >
                             <span class="material-symbols-outlined icon-dashboard">
                                 space_dashboard
                             </span>

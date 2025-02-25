@@ -8,7 +8,9 @@ import { useAuth } from "../../Common/Authstate";
 const CalendarLink = styled(Link)`
     color: white;
     text-decoration: none;
-    position: absolute;
+    position: fixed;
+    top:15px;
+    left:15px;
 
     &:active,
     &:focus {
@@ -97,12 +99,10 @@ const AccountDropdown = () => {
     return(
         <>
             {!hideLink && 
-            <div style={{margin:'15px'}}>
-                <img src="/logo.png" alt="Todotrio Logo" style={{width:'80px', height:'auto', marginRight:'20px'}}/>
+            <div>
+
                 <CalendarLink to="/Main" className="calendarLink">
-                    <span class="material-symbols-outlined icon-calendar">
-                        calendar_month
-                    </span>
+                    <img src="/logo.png" alt="Todotrio Logo" style={{width:'80px', height:'auto', marginRight:'20px'}}/>
                 </CalendarLink>
             </div>}
 
