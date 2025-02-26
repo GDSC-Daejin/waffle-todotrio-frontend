@@ -37,37 +37,46 @@ export const TabWrapper = styled.div`
 
     margin-left: auto;
     margin-right:auto;
-    margin-top: 50px;
+    margin-top: 30px;
     padding: 10px;
     width: 90vw;
 
 `;
 export const PieContainer = styled.div `
     display:none;
-    @media (min-width: 1000px){
+    @media (min-width: 1500px){
         display: flex;
         width: 30%; 
         justify-content: center;
         align-items: center;
     }
 `;
-export const ProgressContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: min-content;
-    gap: 10px;
-    margin: auto;
-    width: 100%; 
-    @media (min-width: 1000px) {
-        width:70%;
+export const HeaderTodoBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px; 
+    @media (min-width: 1500px){
+        width: 70%; 
+
     }
+    
+`;
+export const ProgressHeaderContainer = styled.div`
+    display: grid;
+    grid-auto-flow: column;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+
+    // background-color: blue;
 `;
 export const ProgressHeader = styled.div`
     padding: 20px;
     font-size: 20px;
     font-weight: bold;
     color: white;
-    padding-left:40px;
     user-select: none;
     div {
         width: 15px;
@@ -78,6 +87,17 @@ export const ProgressHeader = styled.div`
         transform
     }
 `;
+export const ProgressContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-flow: column;
+    grid-auto-rows: min-content;
+    gap: 10px;
+    margin: auto;
+    width:100%;
+
+    // background-color: red;
+`;
 export const TodoItem = styled.div`
     position: relative;
     background-color: white;
@@ -85,8 +105,8 @@ export const TodoItem = styled.div`
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: 70%;
-    margin: auto;
+    width: 200px;
+    margin: 5px;
 
     span {
         display: block;

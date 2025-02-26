@@ -77,13 +77,6 @@ const ShareTodoModal = ({onClose, todo}) => {
                 style={{fontSize:'30px'}}>close</span>
             </CloseButton>
             <form onSubmit={handleShare}>
-                <select
-                    value={permission}
-                    onChange={(e) => setPermission(e.target.value)}
-                >
-                    <option value="READ">읽기</option>
-                    <option value="WRITE">쓰기</option>
-                </select>
                 <input
                     type="text"
                     placeholder="사용자 이름 입력"
