@@ -12,6 +12,7 @@ import TodoAddModal from "./components/TodoAddModal";
 import AccountDropdown from "./components/AccountDropdown";
 import TodoDetailModal from "./components/TodoDetailModal";
 import MiniCalendar from "./components/MiniCalendar";
+import FromTodayTodo from "./components/FromTodayTodo";
 
 const Calendar =() => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -142,7 +143,7 @@ const Calendar =() => {
             <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
                 <div className="sidebar-grid">
                     <MiniCalendar/>
-                    <div>todolist</div>
+                    <FromTodayTodo events={events}/>
                     <div className="side-navs">
                         <Link 
                             to="/Dashboard"
