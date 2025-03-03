@@ -81,6 +81,8 @@ const Admin = () => {
     const [users, setUsers] = useState([]);
     const [todos, setTodos] = useState([]);
     const [selectedTodo, setSelectedTodo] = useState(null);
+    // const [filteredTodos, setFilteredTodos] = useState([]);
+    const [searchKeyword, setSearchKeyword] = useState(""); //검색어 상태함수
     const token = localStorage.getItem("token");
 
 
@@ -100,6 +102,7 @@ const Admin = () => {
                     if (response.ok) {
                         const responseData = await response.json();
                         setUsers(responseData.data);
+                        console.log("Users fetched successfully:", responseData.data);
     
                     } else {
                         console.error("사용자 목록 가져오기 실패:", response.status);
@@ -115,6 +118,7 @@ const Admin = () => {
 
     // 모든 Todo 조회
     useEffect(() => {
+
         if (page === "todos") {
             const fetchAllTodos = async () => {
                 try {
@@ -148,8 +152,6 @@ const Admin = () => {
         const status = todo?.status || "상태 없음";
         const category = todo?.category || "기타";
         const content = todo?.content || "내용 없음";
-        const startDate = todo?.startDate || null;
-        const deadline = todo?.deadline || null;
         const createdDate = todo?.createdDate || null;
         const completedDate = todo?.completedDate || null;
     
@@ -178,7 +180,6 @@ const Admin = () => {
                         <h2>모든 사용자 조회</h2>
                         <Button onClick={() => setPage("users")}>조회하기</Button>
                     </Card>
-                    
                     <Card>
                         <h2>모든 Todo 조회</h2>
                         <Button onClick={() => setPage("todos")}>조회하기</Button>
@@ -204,7 +205,7 @@ const Admin = () => {
                         </thead>
                         <tbody>
                             {users.map((user) => (
-                                <tr key={user.id}>
+                                <tr key={user.username}>
                                     <Td>{user.username}</Td>
                                     <Td>{user.email}</Td>
                                 </tr>
@@ -223,6 +224,7 @@ const Admin = () => {
                         </span>
                     </BackButton>                    
                     <h2>모든 Todo 조회</h2>
+
                     <Table style={{width:'80%'
                     }}>
                         <thead>

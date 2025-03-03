@@ -14,14 +14,16 @@ import TodoDetailModal from "./components/TodoDetailModal";
 import MiniCalendar from "./components/MiniCalendar";
 import FromTodayTodo from "./components/FromTodayTodo";
 import CategoryFilter from "./components/CategoryFilter";
+import SearchedTodos from "./components/SearcedTodos";
 
 const Calendar =() => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTodoAddModalOpen, setIsTodoAddModalOpen] = useState(false);
     const [isTodoDetailModalOpen, setIsTodoDetailModalOpen] = useState(false);
     const [selectedTodo, setSelectedTodo] = useState(null);
-
-
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [isSearchedOpen, setIsSearchedOpen] = useState(false);
+    const [searchedTodos, setSearchedTodos] = useState([]);
     const [events, setEvents] = useState([]);
     const token = localStorage.getItem("token");
 
@@ -144,6 +146,55 @@ const Calendar =() => {
         ? events
         : events.filter(event => selectedCategories.includes(event.extendedProps.category));
 
+
+    // 할 일 검색 함수 
+    const handleSearch = async () => {
+        if (searchKeyword.trim() === "") {
+
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/todos`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                });
+    
+                if (response.ok) {
+                    const responseData = await response.json();
+                    setSearchedTodos(responseData.data);
+                } else {
+                    console.error("Todo 목록 가져오기 실패:", response.status);
+                }
+            } catch (error) {
+                console.error("Todo 목록 요청 오류:", error);
+            }
+        } else {
+
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/search?keyword=${searchKeyword}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                });
+                console.log("검색키워드:", searchKeyword);
+    
+                if (response.ok) {
+                    const responseData = await response.json();
+                    setSearchedTodos(responseData.data);
+                    console.log("검색된 목록:",responseData.data);
+                } else {
+                    console.error("Todo 검색 실패:", response.status);
+                }
+            } catch (error) {
+                console.error("Todo 검색 요청 오류:", error);
+            }
+        }
+        setIsSearchedOpen(true);
+    };
+
     return(
         <div className="calendar-tab-flexbox">
 
@@ -237,6 +288,23 @@ const Calendar =() => {
                         );
                     }}
                 /> 
+                {/* 검색창 */}
+                <div className="search-box">
+                    <input
+                        type="text"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        placeholder="Todo 검색"
+                    />
+                    <button onClick={() => handleSearch("검색 키워드")}>검색</button>
+                </div>
+                {searchKeyword && (
+                    <SearchedTodos
+                    isOpen={isSearchedOpen}
+                    onClose={() => setIsSearchedOpen(false)}
+                    searchedTodos={searchedTodos}
+                  />
+                )}
 
                 <TodoDetailModal
                     isOpen={isTodoDetailModalOpen}

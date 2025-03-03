@@ -18,6 +18,7 @@ export const Wrapper = styled.div`
 `;
 export const Form = styled.form`
     user-select: none;
+    position: relative;
 
     label {
         display: block;
@@ -32,14 +33,17 @@ export const Form = styled.form`
         border: none;
         color: white;
         cursor: pointer;
-
     }
 
-    input[type="text"], textarea {
+    textarea {
         all: unset;
         field-sizing: content;
         cursor: text;
-        margin-left: 15px;
+
+        width: 70%;
+        box-sizing: border-box;
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
     }
 
     input[type="date"], select {

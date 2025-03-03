@@ -47,7 +47,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
 
                 if (response.ok) {
                     const responseData = await response.json();
-                    setSharedUser(responseData.data);
+                    setSharedUser(responseData.data || {});
                     console.log("공유자 데이터", responseData.data);
 
                 } else {
@@ -248,16 +248,20 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                         </label>
                     )}
                     <label>
-                        <h2>
-                            {todo.extendedProps?.category ? `[${todo.extendedProps.category}]`: ""}
-                            <input type="text" name="title"
+                        <h3>
+                            <span style={{position:'absolute',top:'50px'}}>
+                                {todo.extendedProps?.category ? `[${todo.extendedProps.category}]`: ""}                                
+                            </span>
+
+                            <TextareaAutosize name="title"
                                 value={editedTodo.title}
                                 onChange={handleChange}
                                 required
                                 className="input-todotitle"
                                 disabled={!isEditing}
+                                style={{marginLeft:'60px'}}
                             />                            
-                        </h2>
+                        </h3>
                     </label>
                     <label>
                         <input type="date" name="startDate"
@@ -266,7 +270,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                             disabled={!isEditing}
                             required
                         />
-                        <span class="material-symbols-outlined">minimize</span>
+                        <span class="material-symbols-outlined" style={{margin:'0'}}>minimize</span>
                         <input type="date" name="deadline"
                             value={editedTodo.deadline}
                             onChange={handleChange}
@@ -275,11 +279,13 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                         />
                     </label>
                     <label>
-                        <span class="material-symbols-outlined">notes</span>
+                        <span class="material-symbols-outlined"
+                        style={{position:'absolute'}}>notes</span>
                         <TextareaAutosize name="content"
                             value={editedTodo.content}
                             onChange={handleChange}
                             disabled={!isEditing}
+                            style={{position:'relative', marginLeft:'40px'}}
                         />
                     </label>
                     <label>
