@@ -5,10 +5,19 @@ import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../Common/Authstate";
 
+
+const BigWrapper = styled.div`
+    background-color: #2D2F3C;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    user-select: none;
+`;
 const CalendarLink = styled(Link)`
     color: white;
     text-decoration: none;
-    position: fixed;
+    position: absolute;
     top:15px;
     left:15px;
 
@@ -22,18 +31,10 @@ const CalendarLink = styled(Link)`
         transform: translate(0, 4px);
     }
 `;
-const Backdrop = styled.div`
-    display: ${({ isUserClicked }) => (isUserClicked ? "block" : "none")};
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index:50;
-`;
+
 
 const Wrapper = styled.div`
-    position: fixed;
+    position: absolute;
     top:10px;
     right:10px;
     z-index:30;
@@ -49,6 +50,16 @@ const UserButton = styled.div`
     z-index:20;
     top:5px;
     right:70px;
+`;
+
+const Backdrop = styled.div`
+    display: ${({ isUserClicked }) => (isUserClicked ? "block" : "none")};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
 `;
 
 const Dropdown = styled.div`
@@ -71,6 +82,7 @@ const CloseButton = styled.span`
     top: 10px;
     right: 10px;
     cursor: pointer;
+    color: white;
 `;
 
 const MenuItem = styled(Link)`
@@ -97,7 +109,7 @@ const AccountDropdown = () => {
     const hideLink = location.pathname === "/Main";
 
     return(
-        <>
+        <BigWrapper>
             {!hideLink && 
             <div>
 
@@ -125,26 +137,21 @@ const AccountDropdown = () => {
 
                         {user == null ? (<></>) : (
                             <>
-                                <MenuItem to="/User">계정 관리</MenuItem>
+                                {user.username === "admin" ? (
+                                    <MenuItem to="/Admin">관리자 페이지</MenuItem>
+                                ) : (
+                                    <MenuItem to="/User">계정 관리</MenuItem>
+                                )}
                                 <MenuItem as="a" onClick={logout}>
                                 로그아웃
                                 </MenuItem>                    
                             </>
                         )}
 
-                        {/* 임시 내비게이션 바 */}
-                        <div style={{}}>
-                            <Link to="/Signup" style={{color:"white",display:'block'}}>회원가입</Link>
-                            <Link to="/Dashboard" style={{color:"white",display:'block'}}>대쉬보드</Link>
-                            <Link to="/Teams" style={{color:"white",display:'block'}}>팀 정보</Link>
-                            <Link to="/User" style={{color:"white",display:'block'}}>회원정보</Link>
-                        </div>
-
                     </Dropdown>                    
                 </Backdrop>
-            </Wrapper>        
-        </>
-
+            </Wrapper>       
+        </BigWrapper> 
     );
 }
 

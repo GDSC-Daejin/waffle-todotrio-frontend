@@ -95,8 +95,6 @@ export const ProgressContainer = styled.div`
     gap: 10px;
     margin: auto;
     width:100%;
-
-    // background-color: red;
 `;
 export const TodoItem = styled.div`
     position: relative;
@@ -107,6 +105,7 @@ export const TodoItem = styled.div`
     border-radius: 5px;
     width: 200px;
     margin: 5px;
+    overflow: hidden;
 
     span {
         display: block;

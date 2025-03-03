@@ -38,6 +38,9 @@ const FromTodayTodo = ({events}) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        const twoWeeksLater = new Date();
+        twoWeeksLater.setDate(today.getDate() + 14);
+
         const grouped = {};
 
         events.forEach(todo => {
@@ -57,9 +60,12 @@ const FromTodayTodo = ({events}) => {
             }
         });
 
-        // 오늘부터의 일정들만 남기고 날짜 정렬
+        // 오늘부터 2주 내의 일정들만 남기고 날짜 정렬
         const sortedGrouped = Object.keys(grouped)
-            .filter(date => new Date(date) >= today)
+            .filter(date => {
+                const dateObj = new Date(date);
+                return dateObj >= today && dateObj <= twoWeeksLater;
+            })
             .sort()
             .map(date => ({ date, todos: grouped[date] }));
 
@@ -99,11 +105,13 @@ const FromTodayTodo = ({events}) => {
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
 
-        if (headerDate.toDateString() === today.toDateString()) return "TODAY";
-        if (headerDate.toDateString() === tomorrow.toDateString()) return "TOMORROW";
+        if (headerDate.toDateString() === today.toDateString()) return "오늘";
+        if (headerDate.toDateString() === tomorrow.toDateString()) return "내일";
 
-        return headerDate.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+        return headerDate.toLocaleDateString("ko-KR", { weekday: "long" }).toUpperCase();
+
     };
+
     const FormatHeaderColor = (date) => {
         return FormatHeaders(date) === "TODAY" ? "#BE3C3C" : "white";
     };
@@ -113,7 +121,7 @@ const FromTodayTodo = ({events}) => {
         <>
             <div style={{height:'100%', overflow:'hidden'}}>
                 {visibleTodos.length === 0 ? (
-                    <p>할 일이 없습니다.</p>
+                    <p>2주 내에 할 일이 없습니다.</p>
                 ) : (
                     visibleTodos.map(({ date, todos }) => (
                         <div key={date} id={`group-${date}`}>

@@ -110,14 +110,6 @@ const Login = () => {
         
       </Wrapper>
 
-      {/* 임시 내비게이션 바 */}
-      <div style={{position:'absolute', bottom:'10px'}}>
-        <Link to="/Signup" style={{color:"white",display:'block'}}>회원가입</Link>
-        <Link to="/Dashboard" style={{color:"white",display:'block'}}>대쉬보드</Link>
-        <Link to="/Teams" style={{color:"white",display:'block'}}>팀 정보</Link>
-        <Link to="/User" style={{color:"white",display:'block'}}>회원정보</Link>
-      </div>
-
     </>
   );
 };

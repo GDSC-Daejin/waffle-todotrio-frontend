@@ -14,6 +14,7 @@ export const Wrapper = styled.div`
     border-radius: 8px;
     padding: 20px;
     padding-top:50px;
+
 `;
 export const Form = styled.form`
     user-select: none;
@@ -21,6 +22,7 @@ export const Form = styled.form`
     label {
         display: block;
         margin-bottom: 20px;
+        color: white;
     }
 
     input, textarea, select {
@@ -30,6 +32,7 @@ export const Form = styled.form`
         border: none;
         color: white;
         cursor: pointer;
+
     }
 
     input[type="text"], textarea {
@@ -71,6 +74,7 @@ export const EditButton = styled.span`
     top: 15px;
     right: 60px;
     cursor: pointer;
+    color: white;
 `;
 export const SaveButton = styled.button`
     background-color: pink;
@@ -90,6 +94,7 @@ export const ShareButton = styled.span`
     bottom: 20px;
     right: 30px;
     cursor: pointer;
+    color: white;
 `;
 export const DeleteButton = styled.button`
     background-color: red;

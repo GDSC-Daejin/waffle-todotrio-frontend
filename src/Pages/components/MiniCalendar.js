@@ -26,7 +26,7 @@ const Wrapper = styled.div`
 
         .react-datepicker__current-month {
             color: white;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             transform: translate(0,-4px);
             margin-bottom: 10px;
@@ -46,9 +46,9 @@ const Wrapper = styled.div`
         }  
 
         .react-datepicker__day-name {
-            width: 1.6rem;
-            height: 1.6rem;
-            font-size: 13px;
+            width: 1.4rem;
+            height: 1.4rem;
+            font-size: 12px;
             color: white; 
         }
         .react-datepicker__day:hover {
@@ -62,11 +62,10 @@ const Wrapper = styled.div`
         .react-datepicker__month {
             margin: 0;
             .react-datepicker__day {
-                width: 1.6rem;
-                height: 1.6rem;
-                font-size: 12px;
+                width: 1.4rem;
+                height: 1.4rem;
+                font-size: 11px;
                 color: white;
-                
             }
 
             .react-datepicker__day--outside-month {
@@ -76,8 +75,7 @@ const Wrapper = styled.div`
             .react-datepicker__day--selected {
                 border-radius: 50px;
                 background-color: #BE3C3C;
-                color: white;
-                font-weight: 400;
+                
             }
         }
     }
@@ -96,7 +94,7 @@ const MiniCalendar = () => {
             shouldCloseOnSelect={false}
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
-            inline // input없이 캘린더만
+            inline
         />
       </Wrapper>
     );

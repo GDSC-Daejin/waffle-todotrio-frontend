@@ -5,8 +5,10 @@ import User from "./Pages/User";
 import Dashboard from "./Pages/Dashboard";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
+import Admin from "./Pages/Admin";
 import { AuthProvider } from "./Common/Authstate";
 import AccountDropdown from "./Pages/components/AccountDropdown";
+
 
 const App = () => {
 
@@ -31,6 +33,7 @@ const AppContent = () => {
         <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/User" element={<User />} />
+            <Route path="/Admin" element={<Admin />} />
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/Signup" element={<Signup />} />
             <Route path="/Main" element={<Calendar />} />

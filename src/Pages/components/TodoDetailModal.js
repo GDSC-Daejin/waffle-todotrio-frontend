@@ -133,12 +133,6 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     // 할 일 완료 처리
     const handleComplete = async () => {
         try {
-            // const endpoint = editedTodo.status === "COMPLETED" 
-            // ? `${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart` 
-            // : `${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`;
-            // console.log("엔드포인트:", endpoint);
-
-            // const response = await fetch(endpoint, {
             const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`, {
                 method: "PUT",
                 headers: {
