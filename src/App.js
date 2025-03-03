@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Calendar from "./Pages/Calendar";
 import User from "./Pages/User";
 import Dashboard from "./Pages/Dashboard";
-import Teams from "./Pages/Teams";
 import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
 import { AuthProvider } from "./Common/Authstate";
@@ -33,7 +32,6 @@ const AppContent = () => {
             <Route path="/" element={<Login />} />
             <Route path="/User" element={<User />} />
             <Route path="/Dashboard" element={<Dashboard />} />
-            <Route path="/Teams" element={<Teams />} />
             <Route path="/Signup" element={<Signup />} />
             <Route path="/Main" element={<Calendar />} />
         </Routes>

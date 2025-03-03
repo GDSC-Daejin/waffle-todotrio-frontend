@@ -13,6 +13,7 @@ import AccountDropdown from "./components/AccountDropdown";
 import TodoDetailModal from "./components/TodoDetailModal";
 import MiniCalendar from "./components/MiniCalendar";
 import FromTodayTodo from "./components/FromTodayTodo";
+import CategoryFilter from "./components/CategoryFilter";
 
 const Calendar =() => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,6 +24,8 @@ const Calendar =() => {
 
     const [events, setEvents] = useState([]);
     const token = localStorage.getItem("token");
+
+    const [selectedCategories, setSelectedCategories] = useState(["전체"]);
 
     // 할 일 데이터 불러오기
     useEffect(() => {
@@ -137,8 +140,13 @@ const Calendar =() => {
 
     };
 
+    const filteredEvents = selectedCategories.includes("전체")
+        ? events
+        : events.filter(event => selectedCategories.includes(event.extendedProps.category));
+
     return(
         <div className="calendar-tab-flexbox">
+
             {/* 왼쪽 사이드바 */}
             <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
                 <div className="sidebar-grid">
@@ -153,12 +161,10 @@ const Calendar =() => {
                                 space_dashboard
                             </span>
                         </Link>
-                        <Link to="/Teams">
-                            <span class="material-symbols-outlined icon-group">
-                                group
-                            </span>
-                        </Link>
-
+                        <CategoryFilter
+                            selectedCategories={selectedCategories}
+                            onCategoryChange={setSelectedCategories}
+                        />
                     </div>
                 </div>
             </div>
@@ -216,13 +222,16 @@ const Calendar =() => {
                         center: "",
                         right: ""
                     }}
-                    events={events}
+                    events={filteredEvents}
                     // eventClick={handleEventClick}
                     eventContent={(eventInfo) => {
+                        const category = eventInfo.event.extendedProps.category;
+                        const categoryClass = category ? `category-${category}` : "category-기타";
+
                         return (
                             <div className="event-item">
-                                <input type="checkbox" className="todo-checkbox"/>
-                                <span className="event-title" onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}
+                                {/* <input type="checkbox" className="todo-checkbox"/> */}
+                                <span className={`event-title ${categoryClass}`} onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}
                                 </span>
                             </div>
                         );

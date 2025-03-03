@@ -13,14 +13,16 @@ const HeaderSpan = styled.span`
 const TodoList = styled.ul`
     list-style-type: none;
     padding: 0;
-    margin-top: 10px;
     li {
         margin:10px 0;
+        font-size: 13px;
     }
 `;
 
 const FromTodayTodo = ({events}) => {
     const [groupedTodos, setGroupedTodos] = useState([]);
+    const [visibleTodos, setVisibleTodos] = useState([]);
+    const [maxHeightReached, setMaxHeightReached] = useState(false);
 
 
     const addNineHours = (dateString) => {
@@ -65,6 +67,32 @@ const FromTodayTodo = ({events}) => {
     }, [events]);
 
 
+    // 높이 계산
+    useEffect(() => {
+        const sidebarHeight = 470;
+        let totalHeight = 0;
+        let visible = [];
+
+        // 날짜 그룹을 순회하며 높이를 계산
+        for (let i = 0; i < groupedTodos.length; i++) {
+            const groupElement = document.querySelector(`#group-${groupedTodos[i].date}`);
+            const groupHeight = groupElement ? groupElement.offsetHeight : 0;
+            totalHeight += groupHeight;
+
+            // 총 높이가 사이드바 높이를 넘지 않으면 해당 날짜 그룹을 보여주고, 넘으면 멈춤
+            if (totalHeight <= sidebarHeight) {
+                visible.push(groupedTodos[i]);
+            } else {
+                setMaxHeightReached(true); // 높이를 넘으면 더 이상 추가하지 않음
+                break;
+            }
+        }
+
+        setVisibleTodos(visible);
+    }, [groupedTodos]);
+
+
+
     const FormatHeaders = (date) => {
         const headerDate = new Date(date);
         const today = new Date();
@@ -83,12 +111,12 @@ const FromTodayTodo = ({events}) => {
 
     return(
         <>
-            <div>
-                {groupedTodos.length === 0 ? (
+            <div style={{height:'100%', overflow:'hidden'}}>
+                {visibleTodos.length === 0 ? (
                     <p>할 일이 없습니다.</p>
                 ) : (
-                    groupedTodos.map(({ date, todos }) => (
-                        <div key={date}>
+                    visibleTodos.map(({ date, todos }) => (
+                        <div key={date} id={`group-${date}`}>
                             <HeaderSpan
                             style={{fontSize:'15px', color: FormatHeaderColor(date)}}>
                                 <strong style={{marginRight:'7px'}}>

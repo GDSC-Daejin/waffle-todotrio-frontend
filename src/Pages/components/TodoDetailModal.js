@@ -35,6 +35,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     useEffect(() => {
         const fetchSharedUser = async () => {
             if (!todo) return;
+
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/${todo.id}/sharer`, {
                     method: "GET",
@@ -47,9 +48,12 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                 if (response.ok) {
                     const responseData = await response.json();
                     setSharedUser(responseData.data);
-                    console.error("공유자 데이터", responseData.data);
+                    console.log("공유자 데이터", responseData.data);
+
                 } else {
-                    console.error("공유자 목록 가져오기 실패:", response.status);
+                    const errorResponse = await response.json();
+
+                    // console.error("공유자 목록 가져오기 실패:", response.status, errorResponse);
                 }
             } catch (error) {
                 console.error("공유자 목록 요청 오류:", error);
@@ -62,16 +66,24 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     useEffect(() => {
         const fetchSuccessRate = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/success-probabillity`, {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/success-probability`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
                     }
+                    
                 });
+                // console.log("토큰:", token);
+                // console.log("성공률API todo id:", todo.id);
     
                 if (response.ok) {
+                    // console.log("OK:", response);
                     const data = await response.json();
-                    setSuccessRate(data.successRate); // 응답에서 성공률을 받아와서 상태로 저장
+                    // console.log("성공률 data 객체:", data);
+                    // console.log("성공률 객체 중 data:", data.data);
+                    setSuccessRate(data.data);
+                    
+                    
                 } else {
                     console.error("성공률을 가져오기 실패");
                 }
@@ -134,11 +146,8 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     "Content-Type": "application/json"
                 }
             });
-            console.log("보내는데이터:",response);
-            console.log("보내는데이터 ok:",response.ok);
-            console.log("보내는데이터 status:",response.status);
+
             const result = await response.json();
-            console.log("서버 응답:", result);
     
             if (result.success) {
                 alert("진행상황 수정 완료!");
