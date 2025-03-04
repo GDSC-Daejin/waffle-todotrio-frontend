@@ -194,20 +194,37 @@
   padding: 8px;
   font-size: 14px;
   border: 1px solid #ccc;
+  background-color: #4A5568;
   border-radius: 5px;
   outline: none;
+  color:white;
 }
+.search-box input:focus {
+  outline:none;
+  border-color: #4A90E2;
+  box-shadow: 0 0 5px #4A90E2;
+}
+
 .search-box button {
-  width: 60px;  /* 버튼 크기 조정 */
+  width: 60px; 
   height: 35px;
-  margin-left: 5px;  /* 버튼과 입력창 사이에 공간 추가 */
-  background-color: #007bff;  /* 버튼 배경색 */
+  margin-left: 5px; 
+  background-color: #3a4f76;
   color: white;
   font-size: 14px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); 
+}
+.search-box button:hover {
+  background-color: #2c3b5c;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+
+}
+.search-box button:active {
+  transform: scale(0.95);
 }
 
 /* ------캘린더 그리드 css------ */
@@ -217,7 +234,6 @@
 .fc-daygrid-day-frame { 
   /* event와 day-grid-number 겹치지 않도록 */
   padding-top: 30px;
-  /* min-height: 100px !important; */ /* 일정 많아지면 스크롤 추가 */
 }
 
 .fc-daygrid-day,

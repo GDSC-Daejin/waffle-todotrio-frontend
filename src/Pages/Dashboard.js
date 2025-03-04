@@ -2,7 +2,7 @@
 // 대쉬보드 페이지
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import {TabBar, Tab, Indicator, TabWrapper, ProgressContainer, ProgressHeader, TodoItem, SharedTodoItem, Sharer, PieContainer, ProgressHeaderContainer, HeaderTodoBox} from "../Styles/DashboardStyle";
+import {TabBar, Tab, Indicator, TabWrapper, ProgressContainer, ProgressHeader, Sharer, PieContainer, ProgressHeaderContainer, HeaderTodoBox, TodoItemStyle, SharedTodoItemStyle, TodoTitle, TodoContent, TodoPriority, TodoStatus, TodoDates, DateIcon} from "../Styles/DashboardStyle";
 import ProgressPie from "./components/ProgressPie";
 
 const Dashboard = () => {
@@ -14,6 +14,22 @@ const Dashboard = () => {
     const [sharedTodos, setSharedTodos] = useState([]);
     const [sharedUser, setSharedUser] = useState({});
     const token = localStorage.getItem("token");
+    const [scrollPosition, setScrollPosition] = useState(0);
+
+    // 스크롤 리스너 (파이차트 애니메이션 효과)
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollPosition(window.scrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const offset = scrollPosition * 0.2;
 
 
     // 진행상황별로 todo 그룹화
@@ -82,21 +98,39 @@ const Dashboard = () => {
         });
     }, [token]);
 
+    const getStatusText = (status) => {
+        if (status === 'COMPLETED') return '완료';
+        if (status === 'DELAYED') return '지연';
+        if (status === 'IN_PROGRESS') return '진행 중';
+        return status;
+      };
+
+
     // 각 상태별 todo 출력 함수 
     const renderTodos = (todos, gridColumn) => {
         return todos.map(todo => {
-            const sharedUserName = sharedUser[todo.id]; // 공유자 정보 가져오기
+            const sharedUserName = sharedUser[todo.id];
+            const startDate = typeof todo.start === 'string' ? todo.start.split("T")[0] : todo.start?.toString().split("T")[0] || '';
+            const endDate = typeof todo.end === 'string' ? todo.end.split("T")[0] : todo.end?.toString().split("T")[0] || '';
             return (
-                <TodoItem key={todo.id} style={{gridColumn}}>
-                    <span>{todo.title}</span>
-                    {todo.end && <span>~{todo.end.split('T')[0]}</span>}
-                    <span>{todo.extendedProps.content}</span>
+                <TodoItemStyle key={todo.id} style={{gridColumn}} hasSharer={sharedUserName ? true : false}>
                     {sharedUserName && <Sharer>{sharedUserName}</Sharer>}
-                </TodoItem>
+                    <TodoTitle>[{todo.extendedProps.category}] {todo.title}</TodoTitle>
+                    <TodoContent>{todo.extendedProps.content}</TodoContent>
+                    <div>
+                        <TodoPriority>{todo.extendedProps.priority}</TodoPriority>
+                    </div>
+                    <TodoDates>
+                        <DateIcon>📅</DateIcon>
+                        {startDate} ~ {endDate}
+                    </TodoDates>
+                </TodoItemStyle>
             );
         });
     };
 
+
+    console.log("sharedTodos:",sharedTodos);
     return(
         <div style={{marginTop:'120px'}}>
 
@@ -115,7 +149,7 @@ const Dashboard = () => {
             </TabBar>
             {selectedTab === "progressTab" && (
                 <TabWrapper>
-                    <PieContainer>
+                    <PieContainer style={{ transform: `translateY(${offset}px)` }}>
                         <ProgressPie
                             inProgressCount={inProgressCount}
                             completedCount={completedCount}
@@ -142,15 +176,21 @@ const Dashboard = () => {
                     {sharedTodos.length > 0 ? (
                         sharedTodos.map(todo => {
                             const sharedUserName = sharedUser[todo.id];
+                            const startDate = todo.startDate && typeof todo.startDate === 'string' ? todo.startDate.split("T")[0] : '';
+                            const endDate = todo.deadline && typeof todo.deadline === 'string' ? todo.deadline.split("T")[0] : '';
                             return (
-                                <SharedTodoItem key={todo.id}>
-                                    <span>{todo.title}</span>
-                                    <span>~{todo.deadline.split('T')[0]}</span>
-                                    <span>{todo.content}</span>
+                                <SharedTodoItemStyle key={todo.id} hasSharer={sharedUserName ? true : false}>
                                     {sharedUserName && (
                                         <Sharer>{sharedUserName}</Sharer>
-                                    )}
-                                </SharedTodoItem>
+                                    )}                                    
+                                    <TodoTitle>{todo.title}</TodoTitle>
+                                    <TodoDates>
+                                        <DateIcon>📅</DateIcon>
+                                        {startDate} ~ {endDate}
+                                    </TodoDates>
+                                    <TodoContent>{todo.content}</TodoContent>
+                                    <TodoStatus status={todo.status}>{getStatusText(todo.status)}</TodoStatus>
+                                </SharedTodoItemStyle>
                             );
                         })
                     ) : (

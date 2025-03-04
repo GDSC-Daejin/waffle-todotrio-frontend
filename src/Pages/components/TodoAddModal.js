@@ -12,19 +12,20 @@ const Backdrop = styled.div`
     width: 100vw;
     height: 100vh;
     z-index:50;
+    background-color: rgba(0, 0, 0, 0.2);
 `;
 
 const Wrapper = styled.div`
     position: fixed;
-    top: 60px;
-    left: 230px;
-    width: 250px;
-    height: auto;
+    top: 80px;
+    left: 40%;
+    transform: translateX(-50%);
     background-color: #3a4f76;
     color: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px;
     z-index: 40;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 ` ;
 const CloseButton = styled.span`
     position: absolute;
@@ -36,16 +37,55 @@ const CloseButton = styled.span`
     z-index: 40
 `;
 const Form = styled.form`
-    display:block;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
     label {
-        display: block;
-        margin-bottom:20px;
+        font-size: 16px;
+        font-weight: bold;
+        p{
+            display: block;
+            paddding:0;
+            margin:0;
+        }
     }
     
     input, select, textarea {
-        position: absolute;
-        left:100px;
+        padding: 5px;
+        margin-top: 5px;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: #4A5568;
+        border: 1px solid #ccc;
+        color:white;
+        &:focus {
+            outline:none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 5px #4A90E2;
+        }
+    }
+
+    input[type="text"], textarea{
+        width:200px;
+    }
+
+`;
+const SubmitButton = styled.button`
+    width:50%;
+    margin:auto;
+    background-color:rgb(93, 110, 145);
+    color: white;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+        background-color: #2c3b5c;
+        transform: scale(1.05);
     }
 `;
 
@@ -132,15 +172,15 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
                 <h2>할 일 추가</h2>
                 <Form onSubmit={handleSubmit}>
                     <label>
-                        제목
+                        <p>제목</p>
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
                     </label>
                     <label>
-                        내용
+                        <p>내용</p>
                         <textarea value={content} onChange={(e) => setContent(e.target.value)} required/>
                     </label>
                     <label>
-                        중요도
+                        <p>중요도</p>
                         <select value={priority} onChange={(e) => setPriority(e.target.value)}>
                             <option value="HIGH">높음</option>
                             <option value="MEDIUM">중간</option>
@@ -148,14 +188,12 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
                         </select>
                     </label>
                     <label>
-                        시작일
+
                         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-                    </label>
-                    <label>
-                        마감일
+                        <p style={{display:'inline-block', margin:'0 10px'}}>-</p>
                         <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} required />
                     </label>                    
-                    <button type="submit">추가</button>
+                    <SubmitButton type="submit">추가</SubmitButton>
                 </Form>
             </Wrapper>
         </Backdrop>

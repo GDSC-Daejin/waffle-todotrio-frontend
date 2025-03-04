@@ -37,28 +37,30 @@ export const TabWrapper = styled.div`
 
     margin-left: auto;
     margin-right:auto;
-    margin-top: 30px;
     padding: 10px;
     width: 90vw;
-
 `;
 export const PieContainer = styled.div `
     display:none;
     @media (min-width: 1500px){
+        position:fixed;
+        left:150px;        
         display: flex;
         width: 30%; 
         justify-content: center;
-        align-items: center;
+        align-items: start;
+        margin-top:180px;
+        transition: transform 0.5s ease-out;
     }
 `;
 export const HeaderTodoBox = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-top: 20px; 
+    margin-top: 10px; 
     @media (min-width: 1500px){
-        width: 70%; 
-
+        width: 70%;
+        margin-left:580px; 
     }
     
 `;
@@ -69,8 +71,6 @@ export const ProgressHeaderContainer = styled.div`
     font-size: 20px;
     font-weight: bold;
     color: white;
-
-    // background-color: blue;
 `;
 export const ProgressHeader = styled.div`
     padding: 20px;
@@ -96,46 +96,115 @@ export const ProgressContainer = styled.div`
     margin: auto;
     width:100%;
 `;
-export const TodoItem = styled.div`
-    position: relative;
-    background-color: white;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
-    margin: 5px;
-    overflow: hidden;
 
-    span {
-        display: block;
-        text-align: left;
-    }
-`;
-
-export const SharedTodoItem = styled.div`
-    position: relative;
-    background-color: white;
-    padding: 10px;
-    display: inline-block;
-    margin:10px;
-    border-radius: 5px;
-    width: auto;
-    min-width: 100px;
-    padding-right: 100px;
-    span {
-        display: block;
-        text-align: left;
-    }
-`;
 
 export const Sharer = styled.span`
-    background-color: #CCFFCC;
-    color: #00BA34;
+    background-color:#66B2FF;
+    color:#fff;
     display: inline-block !important;
     border-radius :5px;
-    padding: 2px 5px;
+    padding: 0 5px;
     position: absolute;
     top:10px;
     right: 10px;
+`;
+
+
+export const TodoItemStyle = styled.div`
+    background-color: #445573;
+    color: white;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-in-out;
+    position: relative;
+    width: 70%;
+    overflow: hidden;
+    word-wrap: break-word;
+    padding-top: ${props => props.hasSharer ? '40px' : '20px'};
+
+    span {
+        display: block;
+        text-align: left;
+    }
+
+    @media (min-width: 1500px){
+        min-width: 300px; 
+    }
+`;
+export const SharedTodoItemStyle = styled.div`
+    background-color: #445573;
+    color: white;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease-in-out;
+    position: relative;
+    height: auto;
+    margin:10px;
+    overflow: hidden;
+    word-wrap: break-word;
+    padding-top: 40px;
+
+    span {
+        display: block;
+        text-align: left;
+    }
+
+    @media (min-width: 1500px){
+        min-width: 300px; 
+    }
+`;
+
+export const TodoTitle = styled.div`
+  font-weight: bold;
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 10px;
+`;
+export const TodoContent = styled.div`
+  font-size: 15px;
+  margin-bottom: 15px;
+`;
+
+export const TodoPriority = styled.div`
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #8a8a8a;
+  padding: 5px 8px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-right: 10px;
+`;
+
+export const TodoStatus = styled.div`
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: ${props => {
+    if (props.status === 'COMPLETED') {
+      return '#34C759';  // 완료 상태 (초록색)
+    } else if (props.status === 'DELAYED') {
+      return '#FBBF24';  // 지연 상태 (노랑색)
+    } else if (props.status === 'IN_PROGRESS') {
+      return '#3B82F6';  // 진행 중 상태 (파랑색)
+    }
+  }};
+  padding: 5px 8px;
+  border-radius: 5px;
+  display: inline-block;
+`;
+
+export const TodoDates = styled.div`
+  font-size: 15px;
+  margin-top: 10px;
+  display: flex;
+  padding: 5px 0;
+`;
+
+export const DateIcon = styled.span`
+  margin-right: 5px;
 `;

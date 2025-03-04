@@ -3,17 +3,33 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
+    // height: auto;
+    // width: 280px;
+    // position: fixed;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+    // z-index:50;
+    // background-color: #3a4f76;
+    // border-radius: 8px;
+    // padding: 20px;
+    // padding-top:70px;
+
     height: auto;
-    width: 280px;
+    width: 300px;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index:50;
+    z-index: 50;
     background-color: #3a4f76;
     border-radius: 8px;
     padding: 20px;
-    padding-top:50px;
+    padding-top: 70px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
 `;
 export const Form = styled.form`
@@ -81,7 +97,7 @@ export const EditButton = styled.span`
     color: white;
 `;
 export const SaveButton = styled.button`
-    background-color: pink;
+    background-color: rgb(93, 110, 145);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -90,7 +106,7 @@ export const SaveButton = styled.button`
     border-radius: 5px;
 
     &:hover {
-        background-color: pink;
+        background-color: #2c3b5c;
     }
 `;
 export const ShareButton = styled.span`
@@ -101,7 +117,7 @@ export const ShareButton = styled.span`
     color: white;
 `;
 export const DeleteButton = styled.button`
-    background-color: red;
+    background-color: #BE3C3C;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -116,7 +132,7 @@ export const DeleteButton = styled.button`
     }
 `;
 export const CompleteButton = styled.button`
-    background-color: green;
+    background-color:rgb(51, 143, 74);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -134,8 +150,10 @@ export const CompleteButton = styled.button`
     }
 `;
 export const Sharer = styled.span`
-    background-color: #346A3E;
-    color: #CCFFCC;
+    background-color:#66B2FF;
+    color: #fff;
     padding: 2px 5px;
     border-radius: 4px;
+    position: absolute;
+    top:-40px;
 `;

@@ -5,39 +5,113 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../Common/Authstate";
 
+// const Wrapper = styled.div`
+    // height: auto;
+    // width: 250px;
+    // position: fixed;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+    // border-radius: 8px;
+    // padding-top:60px;
+    // color: white;
+// `;
+// const Form = styled.form`
+//     display:block;
+
+//     label {
+//         display: block;
+//         margin-bottom:20px;
+//     }
+    
+//     input, select, textarea {
+//         position: absolute;
+//         left:100px;
+//     }
+// `;
+// const Button = styled.button`
+//     background-color: pink;
+//     width:80px;
+//     color: white;
+//     border: none;
+//     padding: 8px 12px;
+//     margin-top: 20px;
+//     cursor: pointer;
+//     border-radius: 5px;
+// `;
+
 const Wrapper = styled.div`
-    height: auto;
-    width: 250px;
+    width: 350px;
+    padding: 20px;
+    background-color: #2D3748;
+    border-radius: 8px;
+    color: #fff;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 8px;
-    padding-top:60px;
-    color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    text-align: center;
 `;
-const Form = styled.form`
-    display:block;
 
-    label {
-        display: block;
-        margin-bottom:20px;
-    }
+const Heading = styled.h2`
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+`;
+
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Label = styled.label`
+    font-size: 1rem;
+    margin-bottom: 8px;
+    text-align: left;
+    width: 100%;
+    color: #ddd;
+`;
+
+const Input = styled.input`
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #4A5568;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
     
-    input, select, textarea {
-        position: absolute;
-        left:100px;
+    &:focus {
+        border-color: #3182CE;
+        outline: none;
+        box-shadow: 0 0 5px #3182CE;
     }
 `;
+
 const Button = styled.button`
-    background-color: pink;
-    width:80px;
+    background-color: #3182CE;
     color: white;
+    width: 100%;
+    padding: 12px;
     border: none;
-    padding: 8px 12px;
-    margin-top: 20px;
-    cursor: pointer;
     border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #2B6CB0;
+    }
+
+    &:active {
+        background-color: #2C5282;
+    }
 `;
 
 const User = () => {
@@ -134,23 +208,23 @@ const User = () => {
     return(
         <>
             <Wrapper>
-                <h2>회원정보 수정</h2>
+                <Heading>회원정보 수정</Heading>
                 <Form onSubmit={handleSubmit}>
-                    <label>
-                        이름:
-                        <input type="text" name="username" value={user.username} onChange={handleChange} required />
-                    </label>
-                    <label>
-                        이메일:
-                        <input type="email" name="email" value={user.email} onChange={handleChange} required />
-                    </label>
-                    <label>
-                        비밀번호:
-                        <input type="password" name="password" value={user.password} onChange={handleChange} />
-                    </label>
+                    <Label>
+                        <p>이름</p>
+                        <Input type="text" name="username" value={user.username} onChange={handleChange} required />
+                    </Label>
+                    <Label>
+                        <p>이메일</p>
+                        <Input type="email" name="email" value={user.email} onChange={handleChange} required />
+                    </Label>
+                    <Label>
+                        <p>비밀번호</p>
+                        <Input type="password" name="password" value={user.password} onChange={handleChange} />
+                    </Label>
                     <Button type="submit">저장</Button>
                 </Form>
-            </Wrapper>        
+            </Wrapper>      
         </>
 
     );

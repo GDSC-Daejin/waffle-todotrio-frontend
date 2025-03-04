@@ -29,6 +29,18 @@ const Calendar =() => {
 
     const [selectedCategories, setSelectedCategories] = useState(["전체"]);
 
+    // 우선순위대로 일정 정렬하는 함수
+    const sortEventsByPriority = (events) => {
+        const priorityOrder = { 높음: 1, 중간: 2, 낮음: 3 }; // 우선순위 매핑
+    
+        return events.sort((a, b) => {
+            const priorityA = a.extendedProps.priority;
+            const priorityB = b.extendedProps.priority;
+    
+            return priorityOrder[priorityA] - priorityOrder[priorityB]; // 우선순위 기준으로 정렬
+        });
+    };
+
     // 할 일 데이터 불러오기
     useEffect(() => {
         const fetchTodos = async () => {
@@ -76,9 +88,8 @@ const Calendar =() => {
                             completedDate: todo.completedDate
                         }
                     }));
-
-                    console.log("캘린더에 등록될 이벤트:", formattedEvents);
-                    setEvents(formattedEvents);
+                    const sortedEvents = sortEventsByPriority(formattedEvents);
+                    setEvents(sortedEvents);
                 }
             } catch (error) {
                 console.error("할 일 데이터를 불러오는 중 오류 발생:", error);
@@ -289,19 +300,22 @@ const Calendar =() => {
                     }}
                 /> 
                 {/* 검색창 */}
-                <div className="search-box">
-                    <input
-                        type="text"
-                        value={searchKeyword}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                        placeholder="Todo 검색"
-                    />
-                    <button onClick={() => handleSearch("검색 키워드")}>검색</button>
-                </div>
+                {isSidebarOpen ? (<></>): (
+                    <div className="search-box">
+                        <input
+                            type="text"
+                            value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                            placeholder="Todo 검색"
+                        />
+                        <button onClick={() => handleSearch("검색 키워드")}>검색</button>
+                    </div>                    
+                )}
+
                 {searchKeyword && (
                     <SearchedTodos
                     isOpen={isSearchedOpen}
-                    onClose={() => setIsSearchedOpen(false)}
+                    onClose={() => {setIsSearchedOpen(false);setSearchKeyword('');}}
                     searchedTodos={searchedTodos}
                   />
                 )}

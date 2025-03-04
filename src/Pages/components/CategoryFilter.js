@@ -21,8 +21,12 @@ const CategoryFilterWrapper = styled.div`
 const Label = styled.label`
     display: flex;
     align-items: center;
+
+    gap: 5px;
     cursor: pointer;
-    padding: 5px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.2s;
 `;
 
 const CategorySpan = styled.span`
@@ -30,7 +34,6 @@ const CategorySpan = styled.span`
     border-radius: 4px;
     font-size: 14px;
     font-weight: bold;
-
     ${(props) => css`
         background-color: ${categoryBGColors[props.category] || "gray"};
         color: ${categoryColors[props.category] || "white"}

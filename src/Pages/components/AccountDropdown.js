@@ -66,9 +66,11 @@ const Dropdown = styled.div`
     display: ${({ isUserClicked }) => (isUserClicked ? "block" : "none")};
     overflow: ${({ isUserClicked }) => (isUserClicked ? "visible" : "hidden")};
     background-color: #516791;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+
     border-radius: 10px;
     padding: 15px;
-    padding-top : 35px;
+    padding-top : 45px;
     position: absolute;
     overflow: hidden;
     top: 60px;
@@ -81,25 +83,39 @@ const CloseButton = styled.span`
     position: absolute;
     top: 10px;
     right: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
 `;
 
 const MenuItem = styled(Link)`
     display: block;
     text-align: center;
-    padding: 5px;
-    margin: 15px;
-    background-color: #3a4f76;
+    padding: 8px 10px;
+    margin: 10px auto;
+    background: #3a4f76;
     color: white;
     text-decoration: none;
     border-radius: 10px;
-    font-size: 14px;
-    transition: background-color 0.1s ease-in-out;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
     cursor: pointer;
+    width:80%;
 
     &:hover {
-        background-color: #2d3e5f;
+        background:rgb(49, 67, 102);
+        transform: scale(1.02);
     }
 `;
 
@@ -119,8 +135,7 @@ const AccountDropdown = () => {
             </div>}
 
             <Wrapper>
-                {/* user 테스트용 */}
-                <span style={{position:"absolute", right:"120px", top:"12px", whiteSpace: "nowrap", color:'white'}}>{user ? `${user.username}님` : ""}</span>
+
 
                 <UserButton>
                     <span class="material-symbols-outlined" style={{fontSize:"40px"}}
@@ -137,6 +152,7 @@ const AccountDropdown = () => {
 
                         {user == null ? (<></>) : (
                             <>
+                                <span style={{whiteSpace: "nowrap", color:'white', marginLeft:'5px'}}>{user ? `안녕하세요 ${user.username}님` : ""}</span>
                                 {user.username === "admin" ? (
                                     <MenuItem to="/Admin">관리자 페이지</MenuItem>
                                 ) : (
