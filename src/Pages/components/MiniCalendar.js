@@ -1,5 +1,5 @@
 // MiniCalendar.js
-// 메인페이지 사이드 바 미니 캘린더
+// 사이드 바 미니 캘린더
 
 import React, { useState } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';

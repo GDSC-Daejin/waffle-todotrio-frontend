@@ -1,7 +1,7 @@
 // TodoAddModal.js
 // 할 일 추가 모달창
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Backdrop = styled.div`
@@ -98,6 +98,12 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
     const [deadline, setDeadline] = useState("");
     const token = localStorage.getItem('token');
 
+    // 시작일 선택 시 마감일을 일치시킴
+    useEffect(() => {
+        if (startDate && !deadline) {
+            setDeadline(startDate);
+        }
+    }, [startDate]);
 
     // add todo 모달창 닫을 때 데이터 비우기
     const handleClose = () => {

@@ -13,10 +13,10 @@
   position : absolute;
   left:0;
   width: 0px;
-  overflow: hidden;
   height: 100vh;
   box-sizing: border-box;
   background-color: #323650;
+  overflow: hidden;
 }
 .sidebar.open {
   width: 250px;
@@ -25,15 +25,18 @@
 .sidebar-grid {
   height: 100%;
   display: grid;
-  grid-template-rows: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 3fr 1fr;
   grid-template-columns: 1fr;
   margin: 5px;
   white-space: nowrap;
 }
 .sidebar-grid > div {
   color: white;
-  padding: 10px;
-  
+  margin: 10px;
+}
+.sidebar-grid > div:nth-child(2) {
+  overflow: auto; 
+  min-height: 200px;
 }
 .side-navs {
   display: flex;
@@ -45,13 +48,9 @@
   color: white;
   text-decoration: none;
 }
-.sidebar-navs a:active,
-.sidebar-navs a:focus {
-    color: white; /* 클릭되었거나 선택된 상태에서 하얀색 유지 */
-}
-.icon-dashboard,
-.icon-group {
+.icon-dashboard{
   font-size : 40px;
+  margin-bottom: 20px;
 }
 /* ----------------------- */
 
@@ -187,9 +186,10 @@
   display: flex;
   align-items: center;
   padding: 5px;
+  width: 25%;
 }
 .search-box input {
-  width: 150px;
+  width: 100%;
   height: 15px;
   padding: 8px;
   font-size: 14px;

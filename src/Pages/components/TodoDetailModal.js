@@ -7,7 +7,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import ShareTodoModal from "./ShareTodoModal";
 
 
-
 const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
@@ -23,7 +22,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
     });
     const token = localStorage.getItem("token");
 
-    // 모달 열릴 때 편집모드 초기화
+    // todo 상세 모달 열릴 때 편집모드 초기화
     useEffect(() => {
         if (isOpen) {
             setIsEditing(false);
@@ -51,9 +50,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     console.log("공유자 데이터", responseData.data);
 
                 } else {
-                    const errorResponse = await response.json();
-
-                    // console.error("공유자 목록 가져오기 실패:", response.status, errorResponse);
+                    console.error("공유자 목록 가져오기 실패:", response.status, errorResponse);
                 }
             } catch (error) {
                 console.error("공유자 목록 요청 오류:", error);
@@ -71,19 +68,11 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                     }
-                    
                 });
-                // console.log("토큰:", token);
-                // console.log("성공률API todo id:", todo.id);
     
                 if (response.ok) {
-                    // console.log("OK:", response);
                     const data = await response.json();
-                    // console.log("성공률 data 객체:", data);
-                    // console.log("성공률 객체 중 data:", data.data);
                     setSuccessRate(data.data);
-                    
-                    
                 } else {
                     console.error("성공률을 가져오기 실패");
                 }
@@ -96,7 +85,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
             fetchSuccessRate();
         }
     }, [todo, token]);
-    
+
 
     useEffect(() => {
         if (todo) {
@@ -119,7 +108,6 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         }
     }, [todo]);
 
-    // 코드 삭제할지 검토
     if (!isOpen || !todo) return null;   
 
     const handleChange = (e) => {
@@ -142,7 +130,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
             });
 
             const result = await response.json();
-    
+            console.log("result:", result);
             if (result.success) {
                 alert("진행상황 수정 완료!");
             } else {
@@ -155,34 +143,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         }
     };
 
-    //버튼 1개로 취소까지 정상작동하는거 확인되고나면 handleProgress 삭제 
-    // 할 일 완료 취소 처리
-    // const handleProgress = async () => {
-    
-    //     try {
-    //         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/restart`, {
-    //             method: "PUT",
-    //             headers: {
-    //                 "Authorization": `Bearer ${token}`,
-    //                 "Content-Type": "application/json"
-    //             }
-    //         });
-    
-    //         const result = await response.json();
-    //         console.log("서버 응답:", result);
-    
-    //         if (result.success) {
-    //             alert("할 일이 완료되었습니다!");
-    //         } else {
-    //             alert("완료 처리에 실패했습니다.");
-    //         }
-    //     } catch (error) {
-    //         console.error("완료 처리 오류:", error);
-    //         alert("네트워크 오류가 발생했습니다.");
-    //     }
-    // };
-
-
+    // 할 일 수정
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -205,6 +166,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     title: editedTodo.title,
                     content: editedTodo.content,
                     priority: editedTodo.priority,
+                    category: editedTodo.category,
                     status: editedTodo.status,
                     startDate: addNineHours(editedTodo.startDate),
                     deadline: addNineHours(editedTodo.deadline)
@@ -223,6 +185,12 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
             alert("네트워크 오류가 발생했습니다.");
         }
     };
+
+    const statusMap = {
+        DELAYED: "지연",
+        IN_PROGRESS: "진행중",
+        COMPLETED: "완료"
+      };
 
     return(
         <Wrapper>
@@ -259,7 +227,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                                 required
                                 className="input-todotitle"
                                 disabled={!isEditing}
-                                style={{marginLeft:'60px'}}
+                                style={{marginLeft:'60px', width:'220px'}}
                             />                            
                         </h3>
                     </label>
@@ -285,7 +253,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                             value={editedTodo.content}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            style={{position:'relative', marginLeft:'40px'}}
+                            style={{position:'relative', marginLeft:'40px', width:'220px'}}
                         />
                     </label>
                     <label>
@@ -302,24 +270,13 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     </label>
                     <label>
                         <span class="material-symbols-outlined">progress_activity</span>
-                        <select name="status"
-                            value={editedTodo.status}
-                            onChange={handleChange}
-                            disabled={!isEditing}
-                        >
-                            <option value="DELAYED">지연</option>
-                            <option value="IN_PROGRESS">진행중</option>
-                            <option value="COMPLETED">완료</option>
-                        </select>
+                        <span style={{marginLeft:'15px', transform:'translate(50%, 0)'}}>{statusMap[editedTodo.status]}</span>
                     </label>
                     {isEditing && <SaveButton type="submit">수정내용 저장</SaveButton>}
                 </Form>
-                <CompleteButton onClick={handleComplete}>
-                    {editedTodo.status === "COMPLETED" ? "완료 취소 버튼" : "완료 버튼"}
+                <CompleteButton onClick={handleComplete} disabled={editedTodo.status === "COMPLETED"}>
+                    완료 버튼
                 </CompleteButton>
-                {/* <CompleteButton onClick={handleProgress}>
-                    완료 취소 버튼
-                </CompleteButton> */}
                 {!isEditing &&
                     <ShareButton onClick={()=>setIsSearching(true)}>
                         <span class="material-symbols-outlined"

@@ -124,7 +124,7 @@ const Login = () => {
         throw new Error("로그인 실패");
       }
 
-      // 토큰 저장 (백엔드에서 토큰을 제공할 경우)
+      // 토큰 저장
       if (data.data) {
         localStorage.setItem("token", data.data);
         console.log("토큰:",data.data);

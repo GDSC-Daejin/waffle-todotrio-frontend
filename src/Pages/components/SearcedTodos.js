@@ -1,4 +1,5 @@
 // SearchedTodos.js
+// todo 검색결과
 
 import styled from "styled-components";
 
@@ -21,7 +22,6 @@ const Wrapper = styled.div`
   width: 350px;
   background-color: #2c3b5c;
   border-radius: 12px;
-  padding: 20px;
   z-index: 60;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
   color: white;
@@ -34,6 +34,18 @@ const Wrapper = styled.div`
     height: 0;
   }
 `;
+
+const Header = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: #2c3b5c;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+`;
+
 const CloseButton = styled.span`
   position: absolute;
   top: 12px;
@@ -51,6 +63,7 @@ const CloseButton = styled.span`
 const SearchedTodosList = styled.ul`
   list-style: none;
   padding: 0;
+  margin: 20px;
 `;
 
 const SearchedTodoItem = styled.li`
@@ -60,6 +73,7 @@ const SearchedTodoItem = styled.li`
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: background-color 0.2s ease-in-out;
+  word-wrap: break-word;
 `;
 
 const TodoTitle = styled.div`
@@ -128,8 +142,11 @@ const SearchedTodos = ({ isOpen, onClose, searchedTodos }) => {
   return (
       <Backdrop isOpen={isOpen}>
         <Wrapper>
-          <CloseButton onClick={onClose}>×</CloseButton>
-          <h3>검색된 할 일 목록</h3>
+          <Header>
+            <CloseButton onClick={onClose}>×</CloseButton>
+            <h3>검색된 할 일 목록</h3>
+          </Header>
+
           {searchedTodos.length === 0 ? (
             <p>검색된 할 일이 없습니다.</p>
           ) : (

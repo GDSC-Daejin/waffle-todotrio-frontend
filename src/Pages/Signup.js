@@ -2,7 +2,7 @@
 // 회원가입 페이지
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -95,7 +95,7 @@ const LoginLink = styled.div`
 `;
 
 const Signup = () => {
-  // console.log(process.env.REACT_APP_API_BASE_URL);
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -114,12 +114,8 @@ const Signup = () => {
         body: JSON.stringify({ username, password, email }),
       });
 
-    // 응답 상태 코드 확인
     console.log("응답 상태 코드:", response.status);
-
-    // 응답 본문 확인
     const data = await response.json();
-    console.log("응답 본문:", data);
 
       if (!response.ok) {
         throw new Error("회원가입 실패");
@@ -127,6 +123,7 @@ const Signup = () => {
 
       console.log("회원가입 성공:", data);
       alert("회원가입이 완료되었습니다!");
+      navigate("/");
     } catch (err) {
       console.error("회원가입 오류:", err);
       setError("회원가입에 실패했습니다.");

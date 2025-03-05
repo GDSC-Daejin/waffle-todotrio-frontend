@@ -1,4 +1,5 @@
 // ProgressPie.js
+// 대쉬보드 페이지 파이그래프
 
 import { patternDotsDef, patternLinesDef } from "@nivo/core";
 import { ResponsivePie } from "@nivo/pie";
@@ -10,21 +11,18 @@ const ProgressPie = ({ inProgressCount, completedCount, delayedCount }) => {
             label: "진행 중",
             value: inProgressCount,
             color: "#3B82F6"
-            // #3B82F6
         },
         {
             id: "완료",
             label: "완료",
             value: completedCount,
             color: "#34C759"
-            // #34C759
         },
         {
             id: "지연",
             label: "지연",
             value: delayedCount,
             color: "#FBBF24"
-            //#FBBF24
         }
     ];
 

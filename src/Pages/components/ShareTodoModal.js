@@ -47,7 +47,6 @@ const ShareTodoModal = ({onClose, todo}) => {
             );
 
             if (!response.ok) {
-                // 서버 응답이 성공적인지 체크 (status 코드 2xx가 아닌 경우 처리)
                 throw new Error(`서버 오류: ${response.status}`);
             }
             console.log("유저네임:",username);

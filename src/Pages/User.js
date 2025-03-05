@@ -4,41 +4,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../Common/Authstate";
-
-// const Wrapper = styled.div`
-    // height: auto;
-    // width: 250px;
-    // position: fixed;
-    // top: 50%;
-    // left: 50%;
-    // transform: translate(-50%, -50%);
-    // border-radius: 8px;
-    // padding-top:60px;
-    // color: white;
-// `;
-// const Form = styled.form`
-//     display:block;
-
-//     label {
-//         display: block;
-//         margin-bottom:20px;
-//     }
-    
-//     input, select, textarea {
-//         position: absolute;
-//         left:100px;
-//     }
-// `;
-// const Button = styled.button`
-//     background-color: pink;
-//     width:80px;
-//     color: white;
-//     border: none;
-//     padding: 8px 12px;
-//     margin-top: 20px;
-//     cursor: pointer;
-//     border-radius: 5px;
-// `;
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
     width: 350px;
@@ -115,6 +81,7 @@ const Button = styled.button`
 `;
 
 const User = () => {
+    const navigate = useNavigate();
     const { login } = useAuth();
     const [user, setUser] = useState({
         username: "",
@@ -195,6 +162,7 @@ const User = () => {
                     password: user.password,
                     token: token,
                 });
+                navigate("/Main");
             } else {
                 alert("회원정보 수정 실패");
             }

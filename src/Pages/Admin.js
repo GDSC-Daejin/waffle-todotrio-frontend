@@ -1,3 +1,6 @@
+//Admin.js
+//관리자 페이지
+
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TodoDetailModal from "./components/TodoDetailModal";
@@ -81,8 +84,7 @@ const Admin = () => {
     const [users, setUsers] = useState([]);
     const [todos, setTodos] = useState([]);
     const [selectedTodo, setSelectedTodo] = useState(null);
-    // const [filteredTodos, setFilteredTodos] = useState([]);
-    const [searchKeyword, setSearchKeyword] = useState(""); //검색어 상태함수
+    const [searchKeyword, setSearchKeyword] = useState("");
     const token = localStorage.getItem("token");
 
 

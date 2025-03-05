@@ -1,4 +1,5 @@
 // FromTodayTodo.js
+// 사이드 바 오늘 기준 해야할 일 리스트
 
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -16,13 +17,12 @@ const TodoList = styled.ul`
     li {
         margin:10px 0;
         font-size: 13px;
+
     }
 `;
 
 const FromTodayTodo = ({events}) => {
     const [groupedTodos, setGroupedTodos] = useState([]);
-    const [visibleTodos, setVisibleTodos] = useState([]);
-    const [maxHeightReached, setMaxHeightReached] = useState(false);
 
 
     const addNineHours = (dateString) => {
@@ -49,7 +49,6 @@ const FromTodayTodo = ({events}) => {
             let currentDate = new Date(start);
             const endDate = new Date(end);
 
-            // todo의 시작일부터 마감일까지 순회
             while (currentDate <= endDate) {
                 const dateStr = currentDate.toISOString().split("T")[0];
 
@@ -72,33 +71,6 @@ const FromTodayTodo = ({events}) => {
         setGroupedTodos(sortedGrouped);
     }, [events]);
 
-
-    // 높이 계산
-    useEffect(() => {
-        const sidebarHeight = 470;
-        let totalHeight = 0;
-        let visible = [];
-
-        // 날짜 그룹을 순회하며 높이를 계산
-        for (let i = 0; i < groupedTodos.length; i++) {
-            const groupElement = document.querySelector(`#group-${groupedTodos[i].date}`);
-            const groupHeight = groupElement ? groupElement.offsetHeight : 0;
-            totalHeight += groupHeight;
-
-            // 총 높이가 사이드바 높이를 넘지 않으면 해당 날짜 그룹을 보여주고, 넘으면 멈춤
-            if (totalHeight <= sidebarHeight) {
-                visible.push(groupedTodos[i]);
-            } else {
-                setMaxHeightReached(true); // 높이를 넘으면 더 이상 추가하지 않음
-                break;
-            }
-        }
-
-        setVisibleTodos(visible);
-    }, [groupedTodos]);
-
-
-
     const FormatHeaders = (date) => {
         const headerDate = new Date(date);
         const today = new Date();
@@ -113,17 +85,17 @@ const FromTodayTodo = ({events}) => {
     };
 
     const FormatHeaderColor = (date) => {
-        return FormatHeaders(date) === "TODAY" ? "#BE3C3C" : "white";
+        return FormatHeaders(date) === "오늘" ? "#BE3C3C" : "white";
     };
 
 
     return(
         <>
             <div style={{height:'100%', overflow:'hidden'}}>
-                {visibleTodos.length === 0 ? (
+                {groupedTodos.length === 0 ? (
                     <p>2주 내에 할 일이 없습니다.</p>
                 ) : (
-                    visibleTodos.map(({ date, todos }) => (
+                    groupedTodos.map(({ date, todos }) => (
                         <div key={date} id={`group-${date}`}>
                             <HeaderSpan
                             style={{fontSize:'15px', color: FormatHeaderColor(date)}}>

@@ -1,4 +1,5 @@
 // DashboardStyle.js
+// 대쉬보드 css
 
 import styled from "styled-components";
 
@@ -49,7 +50,7 @@ export const PieContainer = styled.div `
         width: 30%; 
         justify-content: center;
         align-items: start;
-        margin-top:180px;
+        margin-top: 100px;
         transition: transform 0.5s ease-out;
     }
 `;

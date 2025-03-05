@@ -23,7 +23,7 @@ const App = () => {
 
 const AppContent = () => {
 
-    {/* 특정 위치에서만 계정 드롭다운을 숨김 */}
+    {/* 특정 페이지에서만 계정 드롭다운을 숨김 */}
     const location = useLocation();
     const hideAccountDropdown = location.pathname === "/" || location.pathname === "/Signup";
   

@@ -36,6 +36,7 @@ const Dashboard = () => {
     const inProgressTodos = todos.filter(todo => todo.extendedProps.status === "IN_PROGRESS");
     const completedTodos = todos.filter(todo => todo.extendedProps.status === "COMPLETED");
     const delayedTodos = todos.filter(todo => todo.extendedProps.status === "DELAYED");
+
     // 진행상황별 todo 갯수 세기 
     const inProgressCount = inProgressTodos.length;
     const completedCount = completedTodos.length;
@@ -90,7 +91,7 @@ const Dashboard = () => {
             }
         };
 
-        // 진행 중, 완료, 지연된 Todo에 대해 공유자 정보 요청
+        // 진행 중, 완료, 지연된 Todo의 공유자 정보 요청
         [...inProgressTodos, ...completedTodos, ...delayedTodos].forEach(todo => {
             if (!sharedUser[todo.id]) {
                 fetchSharedUser(todo.id);

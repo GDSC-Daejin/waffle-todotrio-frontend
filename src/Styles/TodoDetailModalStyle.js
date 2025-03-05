@@ -3,18 +3,6 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-    // height: auto;
-    // width: 280px;
-    // position: fixed;
-    // top: 50%;
-    // left: 50%;
-    // transform: translate(-50%, -50%);
-    // z-index:50;
-    // background-color: #3a4f76;
-    // border-radius: 8px;
-    // padding: 20px;
-    // padding-top:70px;
-
     height: auto;
     width: 300px;
     position: fixed;
@@ -30,7 +18,6 @@ export const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
 `;
 export const Form = styled.form`
     user-select: none;
@@ -55,11 +42,10 @@ export const Form = styled.form`
         all: unset;
         field-sizing: content;
         cursor: text;
-
-        width: 70%;
         box-sizing: border-box;
         word-wrap: break-word; 
         overflow-wrap: break-word; 
+        width: 100%;
     }
 
     input[type="date"], select {

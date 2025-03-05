@@ -1,5 +1,5 @@
 // Calendar.js
-// 캘린더 페이지
+// 캘린더 페이지(메인페이지)
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -29,18 +29,6 @@ const Calendar =() => {
 
     const [selectedCategories, setSelectedCategories] = useState(["전체"]);
 
-    // 우선순위대로 일정 정렬하는 함수
-    const sortEventsByPriority = (events) => {
-        const priorityOrder = { 높음: 1, 중간: 2, 낮음: 3 }; // 우선순위 매핑
-    
-        return events.sort((a, b) => {
-            const priorityA = a.extendedProps.priority;
-            const priorityB = b.extendedProps.priority;
-    
-            return priorityOrder[priorityA] - priorityOrder[priorityB]; // 우선순위 기준으로 정렬
-        });
-    };
-
     // 할 일 데이터 불러오기
     useEffect(() => {
         const fetchTodos = async () => {
@@ -52,7 +40,7 @@ const Calendar =() => {
                         "Authorization": `Bearer ${token}`, // 토큰 추가
                         "Content-Type": "application/json"
                     }
-                }); // 백엔드 URL 확인
+                }); 
                 const result = await response.json();
 
                 console.log ("서버 응답 데이터", result);
@@ -88,8 +76,7 @@ const Calendar =() => {
                             completedDate: todo.completedDate
                         }
                     }));
-                    const sortedEvents = sortEventsByPriority(formattedEvents);
-                    setEvents(sortedEvents);
+                    setEvents(formattedEvents);
                 }
             } catch (error) {
                 console.error("할 일 데이터를 불러오는 중 오류 발생:", error);
@@ -117,7 +104,7 @@ const Calendar =() => {
             }
         });
         console.log("이벤트 구조:",info.event);
-        console.log("이벤트 시작 시간:", event.start); // event.start
+        console.log("이벤트 시작 시간:", event.start);
         console.log("이벤트 종료 시간:", event.end);
 
         setIsTodoDetailModalOpen(true);
@@ -125,6 +112,7 @@ const Calendar =() => {
 
     // 선택된 할 일 삭제 함수
     const handleDeleteTodo = async (todoId) => {
+        console.log("투두아이디",todoId);
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
     
         try {
@@ -142,6 +130,7 @@ const Calendar =() => {
                 setIsTodoDetailModalOpen(false);
 
             } else {
+                console.error("respnse text:",response.text())
                 console.error("삭제 실패:", await response.json());
                 alert("삭제에 실패했습니다.");
             }
@@ -150,7 +139,6 @@ const Calendar =() => {
             console.error("삭제 요청 중 오류 발생:", error);
             alert("오류가 발생했습니다.");
         }
-
     };
 
     const filteredEvents = selectedCategories.includes("전체")
@@ -285,14 +273,12 @@ const Calendar =() => {
                         right: ""
                     }}
                     events={filteredEvents}
-                    // eventClick={handleEventClick}
                     eventContent={(eventInfo) => {
                         const category = eventInfo.event.extendedProps.category;
                         const categoryClass = category ? `category-${category}` : "category-기타";
 
                         return (
                             <div className="event-item">
-                                {/* <input type="checkbox" className="todo-checkbox"/> */}
                                 <span className={`event-title ${categoryClass}`} onClick={()=>handleEventClick(eventInfo)}>{eventInfo.event.title}
                                 </span>
                             </div>
