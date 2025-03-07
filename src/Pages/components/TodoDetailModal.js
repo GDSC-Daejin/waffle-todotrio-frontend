@@ -50,7 +50,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
                     console.log("공유자 데이터", responseData.data);
 
                 } else {
-                    console.error("공유자 목록 가져오기 실패:", response.status, errorResponse);
+                    console.error("공유자 목록 가져오기 실패:", response.status);
                 }
             } catch (error) {
                 console.error("공유자 목록 요청 오류:", error);
