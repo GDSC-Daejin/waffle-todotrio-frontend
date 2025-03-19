@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import useAPI from "../Hooks/useAPI";
 
 const Wrapper = styled.div`
   display: flex;
@@ -100,35 +101,20 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const { data, fetchData } = useAPI();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
 
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, email }),
-      });
-
-    console.log("응답 상태 코드:", response.status);
-    const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error("회원가입 실패");
-      }
-
+    await fetchData("auth/signup", "POST", { username, password, email }, null, "회원가입 요청");
+    if (data && data.success) {
       console.log("회원가입 성공:", data);
-      alert("회원가입이 완료되었습니다!");
+      alert("회원가입이 완료!");
       navigate("/");
-    } catch (err) {
-      console.error("회원가입 오류:", err);
-      setError("회원가입에 실패했습니다.");
+    } else {
+      alert("회원가입 실패")        
     }
-  };
+  }
 
   return (
     <>
@@ -136,7 +122,6 @@ const Signup = () => {
       <Wrapper>
         <SignupBox>
           <Title>회원가입</Title>
-          {error && <p style={{ color: "red" }}>{error}</p>}
           <Form onSubmit={handleSignup}>
             <Input
               type="text"

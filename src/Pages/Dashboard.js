@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {TabBar, Tab, Indicator, TabWrapper, ProgressContainer, ProgressHeader, Sharer, PieContainer, ProgressHeaderContainer, HeaderTodoBox, TodoItemStyle, SharedTodoItemStyle, TodoTitle, TodoContent, TodoPriority, TodoStatus, TodoDates, DateIcon} from "../Styles/DashboardStyle";
 import ProgressPie from "./components/ProgressPie";
+import useAPI from "../Hooks/useAPI";
 
 const Dashboard = () => {
     const location = useLocation();
@@ -15,6 +16,8 @@ const Dashboard = () => {
     const [sharedUser, setSharedUser] = useState({});
     const token = localStorage.getItem("token");
     const [scrollPosition, setScrollPosition] = useState(0);
+
+    const {data, fetchData} = useAPI();
 
     // 스크롤 리스너 (파이차트 애니메이션 효과)
     useEffect(() => {
@@ -42,62 +45,34 @@ const Dashboard = () => {
     const completedCount = completedTodos.length;
     const delayedCount = delayedTodos.length;
 
-    // 공유받은 Todo 가져오기
-    useEffect(() => {
-        const fetchSharedTodos = async () => {
-            try {
-                const sharedResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/shared`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
+    useEffect(()=>{
+        fetchData("todos/share/shared", "GET", null, token, "공유받은 일정 가져오기");
+        if (data && data.success) {
+            setSharedTodos(data.data);
+        } else {
+            alert("공유받은 일정 가져오기 실패");
+        }            
+    },[token]);
 
-                const result = await sharedResponse.json();
-                console.log("공유받은 Todo 목록:", result);
-                setSharedTodos(result.data);
-            } catch (error) {
-                console.error("공유된 Todo 목록 가져오기 실패:", error);
-            }
-        };
-
-        fetchSharedTodos();
-    }, [token]);
-
-    // 공유자 정보 가져오기
-    useEffect(() => {
-        const fetchSharedUser = async (todoId) => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/${todoId}/sharer`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (response.ok) {
-                    const responseData = await response.json();
-                    setSharedUser(prevState => ({
-                        ...prevState,
-                        [todoId]: responseData.data
-                    }));
-                } else {
-                    console.error("공유자 목록 가져오기 실패:", response.status);
+    useEffect(()=>{
+        const fetchSharedUser = async (todoId)=> {
+            await fetchData("todos/share/${todoId}/sharer", "GET", null, token, "공유자 가져오기");
+            if (data && data.success) {
+                setSharedUser(prevState => ({
+                    ...prevState,
+                    [todoId]: data.data
+                }));
+            } else {
+                alert("공유자 가져오기 실패");
+            }           
+            // 진행 중, 완료, 지연된 Todo의 공유자 정보 요청
+            [...inProgressTodos, ...completedTodos, ...delayedTodos].forEach(todo => {
+                if (!sharedUser[todo.id]) {
+                    fetchSharedUser(todo.id);
                 }
-            } catch (error) {
-                console.error("공유자 목록 요청 오류:", error);
-            }
-        };
-
-        // 진행 중, 완료, 지연된 Todo의 공유자 정보 요청
-        [...inProgressTodos, ...completedTodos, ...delayedTodos].forEach(todo => {
-            if (!sharedUser[todo.id]) {
-                fetchSharedUser(todo.id);
-            }
-        });
-    }, [token]);
+            });
+        }
+    },[token]);
 
     const getStatusText = (status) => {
         if (status === 'COMPLETED') return '완료';

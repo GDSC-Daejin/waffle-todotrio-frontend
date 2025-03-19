@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TodoDetailModal from "./components/TodoDetailModal";
+import useAPI from "../Hooks/useAPI";
 
 const Container = styled.div`
     background-color: #2D2F3C;
@@ -84,69 +85,30 @@ const Admin = () => {
     const [users, setUsers] = useState([]);
     const [todos, setTodos] = useState([]);
     const [selectedTodo, setSelectedTodo] = useState(null);
-    const [searchKeyword, setSearchKeyword] = useState("");
     const token = localStorage.getItem("token");
+    const { data, fetchData } = useAPI();
 
-
-    // 모든 사용자 조회
-    useEffect(() => {
+    useEffect(()=>{
         if (page === "users") {
-            const fetchAllUsers = async () => {
-                try {
-                    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/users`,{
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        setUsers(responseData.data);
-                        console.log("Users fetched successfully:", responseData.data);
-    
-                    } else {
-                        console.error("사용자 목록 가져오기 실패:", response.status);
-                    }
-                } catch (error) {
-                    console.error("사용자 목록 요청 오류:", error);
-                }
-                
-            };
-            fetchAllUsers();
+            fetchData("admin/users", "GET", null, token, "모든 사용자 조회");
+            if (data && data.success) {
+                setUsers(data.data);
+            } else {
+                alert("모든 사용자 조회 실패");
+            }                
         }
-    }, [page]);
+    },[page]);
 
-    // 모든 Todo 조회
-    useEffect(() => {
-
+    useEffect(()=>{
         if (page === "todos") {
-            const fetchAllTodos = async () => {
-                try {
-                    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/todos`,{
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                        }
-                    });
-
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        setTodos(responseData.data);
-    
-                    } else {
-                        console.error("todo 목록 가져오기 실패:", response.status);
-                    }
-                } catch (error) {
-                    console.error("todo 목록 요청 오류:", error);
-                }
-                
-            };
-            fetchAllTodos();
+            fetchData("admin/todos", "GET", null, token, "모든 일정 조회");
+            if (data && data.success) {
+                setTodos(data.data);
+            } else {
+                alert("모든 일정 조회 실패");
+            }                
         }
-    }, [page]);
+    },[page]);
 
     const handleTodoClick = (todo) => {
 

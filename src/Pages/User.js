@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../Common/Authstate";
 import { useNavigate } from "react-router-dom";
+import useAPI from "../Hooks/useAPI";
 
 const Wrapper = styled.div`
     width: 350px;
@@ -89,33 +90,23 @@ const User = () => {
         password: "",
     });
     const token = localStorage.getItem("token");
+    const {data, fetchData} = useAPI();
 
-    // 유저 데이터 가져오기
-    useEffect(() => {
-        const fetchUser = async () => {
-            try{
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/info`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
+    useEffect(()=>{
+        if(token){
+            fetchData("user/info", "GET", null, token, "회원정보 가져오기");
+            if (data && data.success) {
+                setUser({
+                    username: data.data.username,
+                    email: data.data.email,
+                    password: "",
                 });
-                const result = await response.json();
-
-                if(result.success) {
-                    setUser({
-                        username: result.data.username,
-                        email: result.data.email,
-                        password: "",
-                    });
-                }
-            } catch (error) {
-                console.error("유저 데이터 불러오는 중 오류:",error);
-            }
-        };
-        if(token) fetchUser();
-    }, []);
+            } else {
+                alert("회원정보 가져오기 실패");
+            }            
+        } else alert("토큰 없음");
+    },[]);
+      
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -124,54 +115,35 @@ const User = () => {
             [name]: value,
         }));
     };
-
-    // 유저 데이터 수정
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try{
-            const updatedUser = {
-                username: user.username,
-                email: user.email,
-            };
-    
-            // 비밀번호가 입력된 경우에만 비밀번호수정
-            if (user.password) {
-                updatedUser.password = user.password;
-            }
+        const updatedUser = {
+            username: user.username,
+            email: user.email,
+        };
 
-            console.log("전송된 데이터",updatedUser);
-
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/update`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedUser),
-            });
-            console.log("응답 상태:", response.status);
-            const result = await response.json();
-            console.log("서버응답:",result);
-            
-            if(result.success) {
-                alert("회원정보 수정 완료 !");
-                login({
-                    username: result.data.username,
-                    email: result.data.email,
-                    password: user.password,
-                    token: token,
-                });
-                navigate("/Main");
-            } else {
-                alert("회원정보 수정 실패");
-            }
-
-        } catch (error) {
-            console.log("수정 오류:", error);
-            alert("네트워크 오류 발생");
+        // 비밀번호가 입력된 경우에만 비밀번호수정
+        if (user.password) {
+            updatedUser.password = user.password;
         }
-    };
+
+        await fetchData("user/update", "PUT", updatedUser, null, "회원정보 수정");
+
+        if (data && data.success) {
+            alert("회원정보 수정 완료 !");
+            login({
+                username: data.data.username,
+                email: data.data.email,
+                password: user.password,
+                token: token,
+            });
+            navigate("/Main");
+        } else {
+          alert("회원정보 수정 실패");
+        }
+    }
 
     return(
         <>

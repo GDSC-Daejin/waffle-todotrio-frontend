@@ -5,6 +5,7 @@ import React, { useContext, useState } from "react";
 import { Authstate } from "../Common/Authstate";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import useAPI from "../Hooks/useAPI";
 
 const Wrapper = styled.div`
   display: flex;
@@ -103,45 +104,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { data, fetchData } = useAPI();
+
+  const loginSuccess = (data) => {
+    if (data.data) {
+      localStorage.setItem("token", data.data);
+      console.log("토큰:", data.data);
+    }
+
+    login({username:username, token:data.data});
+    console.log("로그인 성공:", data);
+    alert("로그인 성공!");
+    navigate("/Main"); 
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-      console.log("로그인 성공:", data);
-
-      if (!data.success) {
-        throw new Error("로그인 실패");
-      }
-
-      // 토큰 저장
-      if (data.data) {
-        localStorage.setItem("token", data.data);
-        console.log("토큰:",data.data);
-      }
-
-      if(data.success){
-        login({username:username, token:data.data});
-      }
-      alert("로그인 성공!");
-
-      navigate("/Main");
-
-    } catch (err) {
-      console.error("로그인 오류:", err);
-      setError("로그인에 실패했습니다.");
+    await fetchData("auth/login", "POST", { username, password }, null, "로그인 요청");
+    if (data && data.success) {
+      loginSuccess(data);
+    } else {
+      alert("로그인 실패");
     }
-  };
+  }
 
   return (
     <>
@@ -149,7 +134,6 @@ const Login = () => {
       <Wrapper>
         <LoginBox>
           <Title>로그인</Title>
-          {error && <p style={{ color: "red" }}>{error}</p>}
           <Form onSubmit={handleLogin}>
             <Input
               type="text"

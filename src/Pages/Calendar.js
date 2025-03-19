@@ -15,6 +15,7 @@ import MiniCalendar from "./components/MiniCalendar";
 import FromTodayTodo from "./components/FromTodayTodo";
 import CategoryFilter from "./components/CategoryFilter";
 import SearchedTodos from "./components/SearcedTodos";
+import useAPI from "../Hooks/useAPI";
 
 const Calendar =() => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,61 +30,39 @@ const Calendar =() => {
 
     const [selectedCategories, setSelectedCategories] = useState(["전체"]);
 
-    // 할 일 데이터 불러오기
-    useEffect(() => {
-        const fetchTodos = async () => {
-            try {
-                // 개인 Todo 가져오기
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, // 토큰 추가
-                        "Content-Type": "application/json"
-                    }
-                }); 
-                const result = await response.json();
+    const { data, fetchData } = useAPI();
 
-                console.log ("서버 응답 데이터", result);
+    const bringTodoSuccess = (result, sharedResult) => {
+        const allTodos = [...result.data, ...sharedResult.data];
 
-                // 공유받은 Todo 가져오기
-                const sharedResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/shared`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-                const sharedResult = await sharedResponse.json();
-
-                console.log ("공유todo 서버 응답 데이터", sharedResult);
-
-                if (result.success && sharedResult.success) {
-                    const allTodos = [...result.data, ...sharedResult.data];
-
-                    console.log ("모든 투두", allTodos);
-
-                    const formattedEvents = allTodos.map(todo => ({
-                        id: todo.id,
-                        title: todo.title,
-                        start: todo.startDate,
-                        end: todo.deadline,
-                        extendedProps: {
-                            category: todo.category,
-                            status: todo.status,
-                            content: todo.content,
-                            priority: todo.priority,
-                            createdDate: todo.createdDate,
-                            completedDate: todo.completedDate
-                        }
-                    }));
-                    setEvents(formattedEvents);
-                }
-            } catch (error) {
-                console.error("할 일 데이터를 불러오는 중 오류 발생:", error);
+        const formattedEvents = allTodos.map(todo => ({
+            id: todo.id,
+            title: todo.title,
+            start: todo.startDate,
+            end: todo.deadline,
+            extendedProps: {
+                category: todo.category,
+                status: todo.status,
+                content: todo.content,
+                priority: todo.priority,
+                createdDate: todo.createdDate,
+                completedDate: todo.completedDate
             }
-        };
-        fetchTodos();
-    }, []);
+        }));
+        setEvents(formattedEvents);
+    };
+    // 할 일 데이터 불러오기
+    useEffect(()=>{
+        const result = fetchData("todos", "GET", null, token, "일반일정 가져오기");
+        const sharedResult = fetchData("todos/share/shared", "GET", null, token, "공유일정 가져오기")
+        if (result.success && sharedResult.success) {
+            bringTodoSuccess(result, sharedResult);
+        } else {
+            alert("공유자 가져오기 실패");
+        }           
+    },[]);
+
+
 
     // 할 일 선택 함수
     const handleEventClick = (info) => {
@@ -110,89 +89,41 @@ const Calendar =() => {
         setIsTodoDetailModalOpen(true);
     };
 
-    // 선택된 할 일 삭제 함수
     const handleDeleteTodo = async (todoId) => {
-        console.log("투두아이디",todoId);
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todoId}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-    
-            if (response.ok) {
-                alert("할 일이 삭제되었습니다.");
-                setEvents((prevEvents) => prevEvents.filter(event => event.id !== todoId));
-                setIsTodoDetailModalOpen(false);
-
-            } else {
-                console.error("respnse text:",response.text())
-                console.error("삭제 실패:", await response.json());
-                alert("삭제에 실패했습니다.");
-            }
-            
-        } catch (error) {
-            console.error("삭제 요청 중 오류 발생:", error);
-            alert("오류가 발생했습니다.");
+        await fetchData("todos/${todoId}", "DELETE", null, token, "일정 삭제");
+        if (data && data.success) {
+            alert("일정이 삭제되었습니다.");
+            setEvents((prevEvents) => prevEvents.filter(event => event.id !== todoId));
+            setIsTodoDetailModalOpen(false);
+        } else {
+            alert("일정 삭제 실패");
         }
-    };
+    }
 
     const filteredEvents = selectedCategories.includes("전체")
         ? events
         : events.filter(event => selectedCategories.includes(event.extendedProps.category));
 
-
-    // 할 일 검색 함수 
     const handleSearch = async () => {
         if (searchKeyword.trim() === "") {
 
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/admin/todos`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                });
-    
-                if (response.ok) {
-                    const responseData = await response.json();
-                    setSearchedTodos(responseData.data);
-                } else {
-                    console.error("Todo 목록 가져오기 실패:", response.status);
-                }
-            } catch (error) {
-                console.error("Todo 목록 요청 오류:", error);
+            await fetchData("todos/search?keyword=${searchKeyword}", "GET", null, token, "모든 일정 검색");
+            if (data && data.success) {
+                setSearchedTodos(data.data);
+            } else {
+                alert("모든 일정 검색 실패");
             }
         } else {
-
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/search?keyword=${searchKeyword}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                });
-                console.log("검색키워드:", searchKeyword);
-    
-                if (response.ok) {
-                    const responseData = await response.json();
-                    setSearchedTodos(responseData.data);
-                    console.log("검색된 목록:",responseData.data);
-                } else {
-                    console.error("Todo 검색 실패:", response.status);
-                }
-            } catch (error) {
-                console.error("Todo 검색 요청 오류:", error);
+            await fetchData("admin/todos", "GET", null, token, "키워드 일정 검색");
+            if (data && data.success) {
+                setSearchedTodos(data.data);
+            } else {
+                alert("키워드 일정 검색 실패");
             }
         }
         setIsSearchedOpen(true);
-    };
+    }
 
     return(
         <div className="calendar-tab-flexbox">

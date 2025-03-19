@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import useAPI from "../../Hooks/useAPI";
 
 const Backdrop = styled.div`
     display: ${({ isOpen }) => (isOpen ? "block" : "none")};
@@ -97,6 +98,7 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
     const [startDate, setStartDate] = useState("");
     const [deadline, setDeadline] = useState("");
     const token = localStorage.getItem('token');
+    const { data, fetchData } = useAPI();
 
     // 시작일 선택 시 마감일을 일치시킴
     useEffect(() => {
@@ -117,7 +119,6 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         // 필수항목 미입력 시
         if(!title||!content||!startDate||!deadline){
             alert("모든 필드를 입력해주세요")
@@ -138,36 +139,16 @@ const TodoModal = ({isOpen, onClose, onAddTodo}) => {
             startDate: getDateOnly(startDate),
             deadline: getDateOnly(deadline, true),
         };
-        console.log("보내는 데이터:", newTodo);
 
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos`,{
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newTodo),
-            });
-
-            const result = await response.json();
-            console.log("addtodo result :", result);
-
-            if(result.success){
-                alert("할 일 추가 완료 !");
-                onAddTodo(result.data); //캘린더로 할 일 전달
-                onClose();
-            } else {
-                alert("할 일 추가 실패");
-                console.log("선택한 날짜들:", { startDate, deadline });
-
-            }
-        } catch(error) {
-            console.log("할 일 추가 중 오류:",error);
-            alert("할 일 추가 중 오류 발생");
+        await fetchData("todos/${todo.id}", "PUT", newTodo, token, "일정 추가");
+        if (data && data.success) {
+            alert("일정 추가 완료 !");
+            onAddTodo(data.data);
+            onClose();
+        } else {
+            alert("일정 추가 실패")        
         }
-    };
-
+    }
 
     return (
         <Backdrop isOpen={isOpen}>

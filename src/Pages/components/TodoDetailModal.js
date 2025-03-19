@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Wrapper, Form, CloseButton, EditButton, SaveButton, ShareButton, DeleteButton, CompleteButton, Sharer } from "../../Styles/TodoDetailModalStyle";
 import TextareaAutosize from 'react-textarea-autosize';
 import ShareTodoModal from "./ShareTodoModal";
+import useAPI from "../../Hooks/useAPI";
 
 
 const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
@@ -21,6 +22,7 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         deadline: "",
     });
     const token = localStorage.getItem("token");
+    const { data, fetchData } = useAPI();
 
     // todo 상세 모달 열릴 때 편집모드 초기화
     useEffect(() => {
@@ -30,62 +32,25 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         }
     }, [isOpen]);
 
-    // 공유자 정보 가져오기
-    useEffect(() => {
-        const fetchSharedUser = async () => {
-            if (!todo) return;
+    useEffect(()=>{
+        if (!todo) return;
+        fetchData("todos/share/${todo.id}/sharer", "GET", null, token, "공유자 조회");
+        if (data && data.success) {
+            setSharedUser(data.data || {});
+        } else {
+            alert("공유자 조회 실패");
+        }                
+    },[todo, token, setSharedUser]);
 
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/share/${todo.id}/sharer`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (response.ok) {
-                    const responseData = await response.json();
-                    setSharedUser(responseData.data || {});
-                    console.log("공유자 데이터", responseData.data);
-
-                } else {
-                    console.error("공유자 목록 가져오기 실패:", response.status);
-                }
-            } catch (error) {
-                console.error("공유자 목록 요청 오류:", error);
-            }
-        };
-        fetchSharedUser();
-    }, [todo, token, setSharedUser]);
-
-    // 예상성공률 가져오기
-    useEffect(() => {
-        const fetchSuccessRate = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/success-probability`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                    }
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    setSuccessRate(data.data);
-                } else {
-                    console.error("성공률을 가져오기 실패");
-                }
-            } catch (error) {
-                console.error("성공률api 호출 오류:", error);
-            }
-        };
-    
-        if (todo) {
-            fetchSuccessRate();
-        }
-    }, [todo, token]);
-
+    useEffect(()=>{
+        if (!todo) return;
+        fetchData("todos/${todo.id}/success-probability", "GET", null, token, "성공률 가져오기");
+        if (data && data.success) {
+            setSuccessRate(data.data);
+        } else {
+            alert("성공률 가져오기 실패");
+        }                
+    },[todo, token]);
 
     useEffect(() => {
         if (todo) {
@@ -118,73 +83,47 @@ const TodoDetailModal = ({isOpen, onClose, todo, onDelete}) => {
         });
     };
 
-    // 할 일 완료 처리
-    const handleComplete = async () => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}/complete`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            const result = await response.json();
-            console.log("result:", result);
-            if (result.success) {
-                alert("진행상황 수정 완료!");
-            } else {
-                alert("진행상황 수정 실패");
-                return;
-            }
-        } catch (error) {
-            console.error("진행상황 수정 처리 오류:", error);
-            alert("네트워크 오류가 발생했습니다.");
-        }
-    };
-
-    // 할 일 수정
-    const handleSubmit = async (e) => {
+    const handleComplete = async (e) => {
         e.preventDefault();
 
-        try{
-
-            const addNineHours = (dateString) => {
-                if (!dateString) return null;
-                const date = new Date(dateString);
-                date.setHours(date.getHours() + 9);
-                return date.toISOString();
-            };
-
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/todos/${todo.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    title: editedTodo.title,
-                    content: editedTodo.content,
-                    priority: editedTodo.priority,
-                    category: editedTodo.category,
-                    status: editedTodo.status,
-                    startDate: addNineHours(editedTodo.startDate),
-                    deadline: addNineHours(editedTodo.deadline)
-                })
-            });
-            const result = await response.json();
-            if (result.success) {
-                alert("할 일이 수정되었습니다!");
-                onClose();
-            } else {
-                alert("수정에 실패했습니다.");
-                console.log("응답:", response);
-            }
-        } catch (error) {
-            console.error("수정 오류:", error);
-            alert("네트워크 오류가 발생했습니다.");
+        await fetchData("auth/signup", "POST", null, null, "일정 완료 처리");
+        if (data && data.success) {
+            alert("일정 완료 처리 완료!");
+        } else {
+            alert("일정 완료 처리 실패")        
         }
-    };
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const addNineHours = (dateString) => {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            date.setHours(date.getHours() + 9);
+            return date.toISOString();
+        };
+        await fetchData(
+            "todos/${todo.id}",
+            "PUT",
+            {
+                title: editedTodo.title,
+                content: editedTodo.content,
+                priority: editedTodo.priority,
+                category: editedTodo.category,
+                status: editedTodo.status,
+                startDate: addNineHours(editedTodo.startDate),
+                deadline: addNineHours(editedTodo.deadline)
+            },
+            null,
+            "일정 수정"
+        );
+        if (data && data.success) {
+            alert("일정이 수정되었습니다!");
+            onClose();
+        } else {
+            alert("일정 수정 실패")        
+        }
+    }
 
     const statusMap = {
         DELAYED: "지연",

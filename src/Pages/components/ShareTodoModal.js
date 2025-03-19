@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import styled from "styled-components";
+import useAPI from "../../Hooks/useAPI";
 
 const Wrapper = styled.div`
     background-color: #3a4f76;
@@ -29,45 +30,19 @@ const ShareTodoModal = ({onClose, todo}) => {
     const [username, setUsername] = useState("");
     const [permission, setPermission] = useState("READ");
     const token = localStorage.getItem("token");
+    const { data, fetchData } = useAPI();
 
     const handleShare = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch(
-                `${process.env.REACT_APP_API_BASE_URL}/api/todos/share/${todo.id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ permission, username })
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(`서버 오류: ${response.status}`);
-            }
-            console.log("유저네임:",username);
-            console.log("투두아이디:",todo.id);
-            
-
-            const result = await response.json();
-
-            console.log("보내는데이터:",response);
-            console.log("서버 응답:", result);
-            if (result.success) {
-                alert("공유 완료!");
-                onClose();
-            } else {
-                alert("공유 실패: " + result.message);
-            }
-        } catch (error) {
-            console.error("공유 오류:", error);
-            alert("네트워크 오류가 발생했습니다.");
+        await fetchData("todos/share/${todo.id}", "POST", { permission, username }, token, "일정 공유");
+        if (data && data.success) {
+            alert("공유 완료!");
+            onClose();
+        } else {
+            alert("일정 공유 실패")        
         }
-    };
+    }
 
     return(
         <Wrapper>
